@@ -95,11 +95,6 @@ void MainWindow::InitUi() {
 
   // Split table
   rightLayout->addWidget(InitSplitTable());
-
-  // Split Button
-//  auto split_button = new QPushButton(_("Split action button", "Split"), this);
-//  split_button->setIcon(QIcon(":/find-dollar"));
-//  rightLayout->addWidget(split_button);
 }
 
 QWidget *MainWindow::InitBillOverview() {
@@ -149,7 +144,7 @@ void MainWindow::InitBillLineTable() {
 
 QWidget *MainWindow::InitPeopleTable() {
   auto people_list = new QGroupBox(_("People list label", "People"), this);
-  people_list->setMinimumWidth(300);
+  people_list->setMinimumWidth(350);
   auto people_layout = new QVBoxLayout;
   people_list->setLayout(people_layout);
   widgets_.peopleView = new QTableView(this);
