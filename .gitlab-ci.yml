@@ -12,7 +12,7 @@ stages:
     - export CMAKE_BUILD_PARALLEL_LEVEL=$(nproc)
     - export CTEST_PARALLEL_LEVEL=$(nproc)
     - apt-get -y update
-    - apt-get -y install build-essential cmake qtbase5-dev libboost-dev libboost-date-time-dev libboost-locale-dev
+    - apt-get -y install build-essential cmake git libboost-dev libboost-date-time-dev libboost-locale-dev qtbase5-dev
     - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=Off -S . -B build
   cache:
     key: "${CI_JOB_STAGE}-${CI_COMMIT_REF_SLUG}"
