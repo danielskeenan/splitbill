@@ -119,12 +119,14 @@ QWidget *MainWindow::InitBillOverview() {
   // Start date
   widgets_.billDateStart = new QDateEdit(QDate::currentDate(), this);
   widgets_.billDateStart->setCalendarPopup(true);
+  connect(widgets_.billDateStart, &QDateEdit::dateChanged, this, &MainWindow::s_UpdateBillValidation);
   connect(widgets_.billDateStart, &QDateEdit::dateChanged, this, &MainWindow::s_UpdateSplit);
   layout->addRow(_("Bill start date label", "Start"), widgets_.billDateStart);
 
   // End date
   widgets_.billDateEnd = new QDateEdit(QDate::currentDate(), this);
   widgets_.billDateEnd->setCalendarPopup(true);
+  connect(widgets_.billDateEnd, &QDateEdit::dateChanged, this, &MainWindow::s_UpdateBillValidation);
   connect(widgets_.billDateEnd, &QDateEdit::dateChanged, this, &MainWindow::s_UpdateSplit);
   layout->addRow(_("Bill end date label", "End"), widgets_.billDateEnd);
 
@@ -236,6 +238,10 @@ void MainWindow::s_UpdateBillValidation() {
       widgets_.billIsValidLabel->setText(_("Bill validator error", "The bill is not valid for an unknown reason."));
     }
     widgets_.billIsValidIcon->setPixmap(QIcon(":/bad").pixmap(icon_size));
+  } else if (widgets_.billDateStart->date() > widgets_.billDateEnd->date()) {
+    // The main bill doesn't care about start/end dates
+    widgets_.billIsValidLabel->setText(_("Bill validator error", "The billing period ends before it starts."));
+    widgets_.billIsValidIcon->setPixmap(QIcon(":/bad").pixmap(icon_size));
   } else {
     widgets_.billIsValidLabel->setText(_("Bill validator error", "The bill is valid."));
     widgets_.billIsValidIcon->setPixmap(QIcon(":/good").pixmap(icon_size));
@@ -244,7 +250,7 @@ void MainWindow::s_UpdateBillValidation() {
 
 void MainWindow::s_UpdateSplit() {
   ValidationError error;
-  if (bill_->IsValid(error)) {
+  if (bill_->IsValid(error) && widgets_.billDateStart->date() <= widgets_.billDateEnd->date()) {
     split_view_model_->Update(widgets_.billDateStart->date(), widgets_.billDateEnd->date(), *people_);
   }
 }
