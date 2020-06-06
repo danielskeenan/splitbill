@@ -1,0 +1,16 @@
+/**
+ * @file config.h
+ *
+ * @author dankeenan 
+ * @date 6/3/20
+ */
+
+#ifndef SPLITBILL_SRC_UI_CONFIG_H_IN_
+#define SPLITBILL_SRC_UI_CONFIG_H_IN_
+
+#define APP_NAME "${CMAKE_PROJECT_NAME}"
+#define APP_VERSION "${CMAKE_PROJECT_VERSION}"
+#define APP_AUTHOR "Dan Keenan"
+#define APP_DOMAIN "org.dankeenan"
+
+#endif //SPLITBILL_SRC_UI_CONFIG_H_IN_

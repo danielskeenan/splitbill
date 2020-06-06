@@ -1,0 +1,10 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource>
+        <file alias="remove">minus-circle-solid.svg</file>
+        <file alias="add">plus-circle-solid.svg</file>
+        <file alias="good">check-solid.svg</file>
+        <file alias="bad">times-solid.svg</file>
+        <file alias="find-dollar">search-dollar-solid.svg</file>
+    </qresource>
+</RCC>
