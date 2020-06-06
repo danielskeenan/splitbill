@@ -6,6 +6,7 @@
  */
 
 #include <QtWidgets/QApplication>
+#include <QIcon>
 #include "config.h"
 #include "trans.h"
 #include "MainWindow.h"
@@ -24,6 +25,7 @@ int main(int argc, char *argv[]) {
   app.setApplicationName(APP_NAME);
   app.setApplicationDisplayName(_("App name", APP_NAME));
   app.setApplicationVersion(APP_VERSION);
+  app.setWindowIcon(QIcon(":/app-icon"));
   splitbill::ui::MainWindow main_window;
   main_window.show();
 
