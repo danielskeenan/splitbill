@@ -14,13 +14,42 @@ stages:
     - apt-get -y update
     - apt-get -y install build-essential cmake git libboost-dev libboost-date-time-dev libboost-locale-dev pandoc qtbase5-dev
     - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=Off -S . -B build
-  cache:
-    key: "${CI_JOB_STAGE}-${CI_COMMIT_REF_SLUG}"
-    paths:
-      - build/_deps
+
+.windows-1809:
+  tags:
+    - windows
+    - windows-1809
+  variables:
+    QT_VERSION: 5.15.0
+    TOOLCHAIN: msvc2019_64
+    PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  before_script:
+    - choco install nsis -y
+    - choco install pandoc -y --ia=ALLUSERS=1
+    - choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System'
+    - choco install git.install --params "/GitOnlyOnPath /SChannel /NoAutoCrlf"
+    - choco install boost-msvc-14.1
+    - choco install python -y --params "/quiet /InstallAllUsers=1 /Include_doc=0 /Include_debug=1 /CompileAll=1 /PrependPath=1 /Include_dev=1 /Include_exe=1 /InstallLauncherAllUsers=1 /TargetDir=$($env:PYTHON_PATH) /Include_lib=1 /Include_pip=1 /Include_symbols=1 /Include_tcltk=0 /Include_test=0 /Include_tools=1"
+    - refreshenv
+    - $env:Path += ";$($env:PYTHON_PATH);$($env:PYTHON_PATH)\Scripts;$($env:USER_PYTHON_PATH)\Scripts;$($env:NSIS_PATH)"
+    - setx Path "$($env:Path)"
+    - python -m ensurepip
+    - pip install --user requests semantic_version lxml
+    - git clone https://github.com/engnr/qt-downloader.git
+    - python3 qt-downloader/qt-downloader windows desktop "$env:QT_VERSION" "win64_$env:TOOLCHAIN"
+    - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=Off -S . -B build
 
 test-ubuntu-20-04:
   extends: .ubuntu-20-04
+  stage: test
+  script:
+    - cmake -DBUILD_TESTING=On build
+    - cmake --build build --target splitbill_lib_test
+    - cd build
+    - ctest
+
+test-windows-1809:
+  extends: .windows-1809
   stage: test
   script:
     - cmake -DBUILD_TESTING=On build

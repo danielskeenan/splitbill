@@ -14,6 +14,18 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
         DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/scalable/apps")
 endif ()
 
+# Windows metadata
+if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    set(CPACK_NSIS_DISPLAY_NAME "Split Bill")
+    set(CPACK_NSIS_PACKAGE_NAME "Split Bill")
+    set(CMAKE_INSTALL_UCRT_LIBRARIES TRUE)
+    include(InstallRequiredSystemLibraries)
+
+    # Bundle Qt runtime
+    include("${CMAKE_CURRENT_LIST_DIR}/Windeployqt.cmake")
+    windeployqt(splitbill qt)
+endif ()
+
 set(CPACK_PACKAGE_VENDOR "${PROJECT_AUTHOR}")
 set(CPACK_PACKAGE_CONTACT "${PROJECT_AUTHOR} <dk@dankeenan.org>")
 set(CPACK_PACKAGE_ICON "${PROJECT_SOURCE_DIR}/resources/app-icon.svg")
