@@ -23,7 +23,7 @@ stages:
     PYTHON_PATH: 'C:\Python38'
     QT_VERSION: 5.15.0
     QT_TOOLCHAIN: msvc2019_64
-    Qt5_DIR: "$QT_VERSION\$QT_TOOLCHAIN\lib\cmake\Qt5"
+    Qt5_DIR: "$QT_VERSION/$QT_TOOLCHAIN/lib/cmake/Qt5"
     PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
   before_script:
     - choco install nsis -y
