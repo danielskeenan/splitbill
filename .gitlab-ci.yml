@@ -20,6 +20,7 @@ stages:
     - windows
     - windows-1809
   variables:
+    PYTHON_PATH: 'C:\Python38'
     QT_VERSION: 5.15.0
     TOOLCHAIN: msvc2019_64
     PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
