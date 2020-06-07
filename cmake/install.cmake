@@ -2,6 +2,7 @@ install(TARGETS splitbill RUNTIME BUNDLE)
 
 # Linux metadata
 if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    include(GNUInstallDirs)
     # .desktop file is filled in with configure-time info
     configure_file("${PROJECT_SOURCE_DIR}/meta/linux/splitbill.desktop" "${PROJECT_BINARY_DIR}/meta/splitbill.desktop")
     install(FILES "${PROJECT_BINARY_DIR}/meta/splitbill.desktop"
