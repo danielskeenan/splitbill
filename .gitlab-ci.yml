@@ -37,8 +37,8 @@ build-ubuntu-20-04:
     - cpack -G "TGZ;TBZ2;DEB" -B "$(pwd)/packages"
   artifacts:
     paths:
-      - packages/splitbill-*.tar.gz
-      - packages/splitbill-*.tar.bz2
-      - packages/splitbill-*.deb
-      - packages/splitbill-*.md5
+      - build/packages/splitbill-*.tar.gz
+      - build/packages/splitbill-*.tar.bz2
+      - build/packages/splitbill-*.deb
+      - build/packages/splitbill-*.md5
     expire_in: 1 week
