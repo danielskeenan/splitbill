@@ -22,7 +22,8 @@ stages:
   variables:
     PYTHON_PATH: 'C:\Python38'
     QT_VERSION: 5.15.0
-    TOOLCHAIN: msvc2019_64
+    QT_TOOLCHAIN: msvc2019_64
+    Qt5_DIR: "$QT_VERSION\$QT_TOOLCHAIN\lib\cmake\Qt5"
     PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
   before_script:
     - choco install nsis -y
@@ -37,7 +38,9 @@ stages:
     - python -m ensurepip
     - pip install --user requests semantic_version lxml
     - git clone https://github.com/engnr/qt-downloader.git
-    - python qt-downloader/qt-downloader windows desktop "$env:QT_VERSION" "win64_$env:TOOLCHAIN"
+    - python qt-downloader\qt-downloader windows desktop "$env:QT_VERSION" "win64_$env:QT_TOOLCHAIN"
+    - $env:Path += ";$env:QT_VERSION\$env:QT_TOOLCHAIN\bin"
+    - setx Path "$($env:Path)"
     - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=Off -S . -B build
 
 test-ubuntu-20-04:
