@@ -32,7 +32,7 @@ stages:
     - choco install git.install -y --params "/GitOnlyOnPath /SChannel /NoAutoCrlf"
     - choco install python -y --params "/quiet /InstallAllUsers=1 /Include_doc=0 /Include_debug=1 /CompileAll=1 /PrependPath=1 /Include_dev=1 /Include_exe=1 /InstallLauncherAllUsers=1 /TargetDir=$($env:PYTHON_PATH) /Include_lib=1 /Include_pip=1 /Include_symbols=1 /Include_tcltk=0 /Include_test=0 /Include_tools=1"
     - curl.exe -L -o boost-installer.exe https://downloads.sourceforge.net/project/boost/boost-binaries/1.67.0/boost_1_67_0-msvc-14.1-64.exe
-    - boost-installer.exe /VERYSILENT
+    - ./boost-installer.exe /VERYSILENT
     - refreshenv
     - $env:Path += ";$($env:PYTHON_PATH);$($env:PYTHON_PATH)\Scripts;$($env:USER_PYTHON_PATH)\Scripts;$($env:NSIS_PATH);C:\Program Files\CMake\bin"
     - setx Path "$($env:Path)"
