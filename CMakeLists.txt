@@ -17,4 +17,7 @@ if(${CMAKE_PROJECT_NAME} STREQUAL ${PROJECT_NAME} AND ${BUILD_TESTING})
     add_subdirectory(tests)
 endif()
 
-include(cmake/install.cmake)
+set(BUILD_PACKAGE Off CACHE BOOL "Create packages, installers, etc.")
+if (BUILD_PACKAGE)
+    include(cmake/install.cmake)
+endif ()

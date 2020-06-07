@@ -65,6 +65,7 @@ build-ubuntu-20-04:
   extends: .ubuntu-20-04
   stage: build
   script:
+    - cmake -DBUILD_PACKAGE=On build
     - cmake --build build
     - cd build
     - cpack -G "TGZ;TBZ2;DEB" -B "$(pwd)/packages"
