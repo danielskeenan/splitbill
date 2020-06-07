@@ -37,7 +37,7 @@ stages:
     - python -m ensurepip
     - pip install --user requests semantic_version lxml
     - git clone https://github.com/engnr/qt-downloader.git
-    - python3 qt-downloader/qt-downloader windows desktop "$env:QT_VERSION" "win64_$env:TOOLCHAIN"
+    - python qt-downloader/qt-downloader windows desktop "$env:QT_VERSION" "win64_$env:TOOLCHAIN"
     - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=Off -S . -B build
 
 test-ubuntu-20-04:
