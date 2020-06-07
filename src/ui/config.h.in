@@ -10,7 +10,7 @@
 
 #define APP_NAME "${CMAKE_PROJECT_NAME}"
 #define APP_VERSION "${CMAKE_PROJECT_VERSION}"
-#define APP_AUTHOR "Dan Keenan"
-#define APP_DOMAIN "org.dankeenan"
+#define APP_AUTHOR "${PROJECT_AUTHOR}"
+#define APP_DOMAIN "${PROJECT_AUTHOR_DOMAIN}"
 
 #endif //SPLITBILL_SRC_UI_CONFIG_H_IN_

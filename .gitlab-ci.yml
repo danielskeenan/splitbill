@@ -1,6 +1,6 @@
 stages:
   - test
-#  - build
+  - build
 
 .ubuntu-20-04:
   image: ubuntu:20.04
@@ -12,7 +12,7 @@ stages:
     - export CMAKE_BUILD_PARALLEL_LEVEL=$(nproc)
     - export CTEST_PARALLEL_LEVEL=$(nproc)
     - apt-get -y update
-    - apt-get -y install build-essential cmake git libboost-dev libboost-date-time-dev libboost-locale-dev qtbase5-dev
+    - apt-get -y install build-essential cmake git libboost-dev libboost-date-time-dev libboost-locale-dev pandoc qtbase5-dev
     - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=Off -S . -B build
   cache:
     key: "${CI_JOB_STAGE}-${CI_COMMIT_REF_SLUG}"
@@ -27,3 +27,18 @@ test-ubuntu-20-04:
     - cmake --build build --target splitbill_lib_test
     - cd build
     - ctest
+
+build-ubuntu-20-04:
+  extends: .ubuntu-20-04
+  stage: build
+  script:
+    - cmake --build build
+    - cd build
+    - cpack -G "TGZ;TBZ2;DEB" -B "$(pwd)/packages"
+  artifacts:
+    paths:
+      - packages/splitbill-*.tar.gz
+      - packages/splitbill-*.tar.bz2
+      - packages/splitbill-*.deb
+      - packages/splitbill-*.md5
+    expire_in: 1 week
