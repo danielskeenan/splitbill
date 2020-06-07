@@ -32,7 +32,7 @@ stages:
     - choco install boost-msvc-14.1 -y
     - choco install python -y --params "/quiet /InstallAllUsers=1 /Include_doc=0 /Include_debug=1 /CompileAll=1 /PrependPath=1 /Include_dev=1 /Include_exe=1 /InstallLauncherAllUsers=1 /TargetDir=$($env:PYTHON_PATH) /Include_lib=1 /Include_pip=1 /Include_symbols=1 /Include_tcltk=0 /Include_test=0 /Include_tools=1"
     - refreshenv
-    - $env:Path += ";$($env:PYTHON_PATH);$($env:PYTHON_PATH)\Scripts;$($env:USER_PYTHON_PATH)\Scripts;$($env:NSIS_PATH)"
+    - $env:Path += ";$($env:PYTHON_PATH);$($env:PYTHON_PATH)\Scripts;$($env:USER_PYTHON_PATH)\Scripts;$($env:NSIS_PATH);C:\Program Files\CMake\bin"
     - setx Path "$($env:Path)"
     - python -m ensurepip
     - pip install --user requests semantic_version lxml
