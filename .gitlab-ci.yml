@@ -76,6 +76,8 @@ test-windows-1809:
 build-ubuntu-20-04:
   extends: .ubuntu-20-04
   stage: build
+  needs:
+    - test-ubuntu-20-04
   script:
     - cmake -DBUILD_PACKAGE=On build
     - cmake --build build
@@ -92,6 +94,8 @@ build-ubuntu-20-04:
 build-windows-1809:
   extends: .windows-1809
   stage: build
+  needs:
+    - test-windows-1809
   script:
     - cmake -DBUILD_PACKAGE=On build
     - cmake --build build
