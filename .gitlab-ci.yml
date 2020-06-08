@@ -43,12 +43,12 @@ stages:
     - $env:Path += ";$($env:PYTHON_PATH);$($env:PYTHON_PATH)\Scripts;$($env:USER_PYTHON_PATH)\Scripts;$($env:NSIS_PATH);C:\Program Files\CMake\bin"
     - setx Path "$($env:Path)"
     - python -m ensurepip
-    - pip install --user requests semantic_version lxml
+    - pip install requests semantic_version lxml
     - git clone https://github.com/engnr/qt-downloader.git
     - python qt-downloader\qt-downloader windows desktop "$env:QT_VERSION" "win64_$env:QT_TOOLCHAIN"
     - $env:Path += ";$env:QT_VERSION\$env:QT_TOOLCHAIN\bin"
     - setx Path "$($env:Path)"
-    - pip install --user conan
+    - pip install conan
     - mkdir build
     - conan install . -if=./build
     - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=Off -S . -B build
