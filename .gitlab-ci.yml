@@ -31,9 +31,10 @@ stages:
     - choco install cmake -y --installargs 'ADD_CMAKE_TO_PATH=System'
     - choco install git.install -y --params "/GitOnlyOnPath /SChannel /NoAutoCrlf"
     - choco install python -y --params "/quiet /InstallAllUsers=1 /Include_doc=0 /Include_debug=1 /CompileAll=1 /PrependPath=1 /Include_dev=1 /Include_exe=1 /InstallLauncherAllUsers=1 /TargetDir=$($env:PYTHON_PATH) /Include_lib=1 /Include_pip=1 /Include_symbols=1 /Include_tcltk=0 /Include_test=0 /Include_tools=1"
-    - curl.exe -L -o boost-installer.exe https://downloads.sourceforge.net/project/boost/boost-binaries/1.67.0/boost_1_67_0-msvc-14.1-64.exe
-    - ./boost-installer.exe /VERYSILENT
+#    - curl.exe -L -o boost-installer.exe https://downloads.sourceforge.net/project/boost/boost-binaries/1.67.0/boost_1_67_0-msvc-14.1-64.exe
+#    - ./boost-installer.exe /VERYSILENT
     - refreshenv
+    - vcpkg install boost-locale boost-date-time
     - $env:Path += ";$($env:PYTHON_PATH);$($env:PYTHON_PATH)\Scripts;$($env:USER_PYTHON_PATH)\Scripts;$($env:NSIS_PATH);C:\Program Files\CMake\bin"
     - setx Path "$($env:Path)"
     - python -m ensurepip
@@ -42,7 +43,7 @@ stages:
     - python qt-downloader\qt-downloader windows desktop "$env:QT_VERSION" "win64_$env:QT_TOOLCHAIN"
     - $env:Path += ";$env:QT_VERSION\$env:QT_TOOLCHAIN\bin"
     - setx Path "$($env:Path)"
-    - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=Off -S . -B build
+    - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -DBUILD_TESTING=Off -S . -B build
 
 test-ubuntu-20-04:
   extends: .ubuntu-20-04
