@@ -38,3 +38,12 @@ target_link_libraries(splitbill Qt5::Widgets)
 #target_include_directories(splitbill PUBLIC "${CONAN_INCLUDE_DIRS_BOOST}")
 target_link_libraries(splitbill CONAN_LIB::boost_libboost_locale)
 target_include_directories(splitbill PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+
+# Qt packaging
+if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+#    target_compile_options(splitbill PRIVATE "/MDd")
+    target_link_options(splitbill PRIVATE "/NODEFAULTLIB:library")
+    # Bundle Qt runtime
+    include("${CMAKE_CURRENT_LIST_DIR}/../../cmake/Windeployqt.cmake")
+    windeployqt(splitbill qt)
+endif ()
