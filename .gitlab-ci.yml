@@ -50,7 +50,7 @@ stages:
     - setx Path "$($env:Path)"
     - pip install conan
     - mkdir build
-    - conan install . -if=./build
+    - conan install . -if=build
     - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=Off -S . -B build
 
 test-ubuntu-20-04:
