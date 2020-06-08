@@ -12,7 +12,7 @@ stages:
     - export CMAKE_BUILD_PARALLEL_LEVEL=$(nproc)
     - export CTEST_PARALLEL_LEVEL=$(nproc)
     - apt-get -y update
-    - apt-get -y install build-essential cmake git libgl1-mesa-dev pandoc python3 python3-pip
+    - apt-get -y install build-essential cmake git libgl1-mesa-dev libglib2.0-dev pandoc python3 python3-pip
     - export PATH="/root/.local/bin:${PATH}"
     - pip3 install --user conan
     - conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
