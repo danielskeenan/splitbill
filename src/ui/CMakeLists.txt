@@ -9,7 +9,7 @@ set(autouic_options
     )
 
 # Boost Locale
-find_package(Boost COMPONENTS locale REQUIRED)
+#find_package(Boost REQUIRED)
 
 # Config
 configure_file(config.h.in config.h)
@@ -35,5 +35,6 @@ add_executable(splitbill
 
 target_link_libraries(splitbill splitbill_lib)
 target_link_libraries(splitbill Qt5::Widgets)
-target_link_libraries(splitbill Boost::locale)
+#target_include_directories(splitbill PUBLIC "${CONAN_INCLUDE_DIRS_BOOST}")
+target_link_libraries(splitbill CONAN_LIB::boost_libboost_locale)
 target_include_directories(splitbill PRIVATE ${CMAKE_CURRENT_BINARY_DIR})

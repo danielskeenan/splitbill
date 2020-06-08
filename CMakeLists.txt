@@ -4,8 +4,10 @@ project(splitbill
     DESCRIPTION "Split bills among several people fairly")
 set(PROJECT_AUTHOR "Dan Keenan")
 set(PROJECT_AUTHOR_DOMAIN "org.dankeenan")
-
 set(CMAKE_CXX_STANDARD 17)
+include("${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
+conan_basic_setup(TARGETS)
+add_definitions(-DBOOST_AUTO_LINK_SYSTEM)
 
 add_subdirectory(src)
 add_subdirectory(resources)
