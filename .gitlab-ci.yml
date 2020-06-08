@@ -12,7 +12,7 @@ stages:
     - export CMAKE_BUILD_PARALLEL_LEVEL=$(nproc)
     - export CTEST_PARALLEL_LEVEL=$(nproc)
     - apt-get -y update
-    - apt-get -y install build-essential cmake git libboost-dev libboost-date-time-dev libboost-locale-dev pandoc qtbase5-dev
+    - apt-get -y install build-essential cmake git libboost-dev libboost-date-time-dev libboost-locale-dev pandoc python3 qtbase5-dev
     - pip3 install --user conan
     - mkdir build
     - conan install . -if=./build
