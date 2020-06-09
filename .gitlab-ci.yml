@@ -33,7 +33,7 @@ stages:
     - choco install cmake -y --installargs 'ADD_CMAKE_TO_PATH=System'
     - choco install git.install -y --params "/GitOnlyOnPath /SChannel /NoAutoCrlf"
     - choco install python -y --params "/quiet /InstallAllUsers=1 /Include_doc=0 /Include_debug=1 /CompileAll=1 /PrependPath=1 /Include_dev=1 /Include_exe=1 /InstallLauncherAllUsers=1 /TargetDir=$($env:PYTHON_PATH) /Include_lib=1 /Include_pip=1 /Include_symbols=1 /Include_tcltk=0 /Include_test=0 /Include_tools=1"
-    - choco install wixtoolset -y
+#    - choco install wixtoolset -y
     #    - curl.exe -L -o boost-installer.exe "https://downloads.sourceforge.net/project/boost/boost-binaries/$env:BOOST_VERSION/$env:BOOST_INSTALLER_FILE"
     #    - ./boost-installer.exe /VERYSILENT
     - refreshenv
@@ -96,7 +96,7 @@ build-windows-1809:
     - cmake -DBUILD_PACKAGE=On build
     - cmake --build build
     - cd build
-    - cpack -G "WIX" -B "$($pwd.path)/packages"
+    - cpack -G "NSIS" -B "$($pwd.path)/packages"
   artifacts:
     paths:
       - build/packages/splitbill-*.*
