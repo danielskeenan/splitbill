@@ -35,7 +35,6 @@ add_executable(splitbill
 
 target_link_libraries(splitbill splitbill_lib)
 target_link_libraries(splitbill Qt5::Widgets)
-target_include_directories(splitbill PUBLIC "${CONAN_INCLUDE_DIRS_BOOST}")
 target_link_libraries(splitbill ${BOOST_LOCALE})
 target_include_directories(splitbill PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 

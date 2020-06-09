@@ -12,11 +12,7 @@ stages:
     - export CMAKE_BUILD_PARALLEL_LEVEL=$(nproc)
     - export CTEST_PARALLEL_LEVEL=$(nproc)
     - apt-get -y update
-    - apt-get -y install build-essential cmake git libgl1-mesa-dev pandoc python3 python3-pip
-    - export PATH="/root/.local/bin:${PATH}"
-    - pip3 install --user conan
-    - conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
-    - conan install . -s build_type=Release --install-folder=build
+    - apt-get -y install build-essential cmake git libboost-dev libboost-date-time-dev libboost-locale-dev pandoc qtbase5-dev
     - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=Off -S . -B build
 
 .windows-1809:
