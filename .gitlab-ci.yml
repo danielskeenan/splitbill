@@ -49,7 +49,7 @@ stages:
     - pip install conan
     - conan profile new --detect --force default
     - conan profile show default
-#    - conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
+    - conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
     - conan install . --profile=default --build missing --install-folder=build
     - cat build/conan.lock
     - cat build/conaninfo.txt
