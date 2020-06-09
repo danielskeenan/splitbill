@@ -93,7 +93,7 @@ build-windows-1809:
   needs:
     - test-windows-1809
   script:
-    - cmake -DBUILD_PACKAGE=On build
+    - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_PACKAGE=On build
     - cmake --build build
     - cd build
     - cpack -G "NSIS" -B "$($pwd.path)/packages"
