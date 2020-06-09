@@ -5,8 +5,9 @@ project(splitbill
 set(PROJECT_AUTHOR "Dan Keenan")
 set(PROJECT_AUTHOR_DOMAIN "org.dankeenan")
 set(CMAKE_CXX_STANDARD 17)
-include("${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
-conan_basic_setup(TARGETS)
+if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    include(cmake/conan.cmake)
+endif ()
 add_definitions(-DBOOST_AUTO_LINK_SYSTEM)
 
 add_subdirectory(src)
