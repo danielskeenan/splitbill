@@ -20,6 +20,7 @@ stages:
     - windows
     - windows-1809
   variables:
+    CONAN_USER_HOME: "$CI_PROJECT_DIR"
     PYTHON_PATH: 'C:\Python38'
     QT_VERSION: 5.15.0
     QT_TOOLCHAIN: msvc2019_64
@@ -54,6 +55,10 @@ stages:
     - cat build/conan.lock
     - cat build/conaninfo.txt
     - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=Off -S . -B build
+  cache:
+    key: "windows-1809"
+    paths:
+      - ".conan"
 
 test-ubuntu-20-04:
   extends: .ubuntu-20-04
