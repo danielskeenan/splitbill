@@ -12,11 +12,7 @@ stages:
     - export CMAKE_BUILD_PARALLEL_LEVEL=$(nproc)
     - export CTEST_PARALLEL_LEVEL=$(nproc)
     - apt-get -y update
-    - apt-get -y install build-essential cmake git libgl1-mesa-dev pandoc python3 python3-pip
-    - export PATH="/root/.local/bin:${PATH}"
-    - pip3 install --user conan
-    - conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
-    - conan install . -s build_type=Release --install-folder=build
+    - apt-get -y install build-essential cmake git libboost-dev libboost-date-time-dev libboost-locale-dev pandoc qtbase5-dev
     - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=Off -S . -B build
 
 .windows-1809:
@@ -28,30 +24,30 @@ stages:
     QT_VERSION: 5.15.0
     QT_TOOLCHAIN: msvc2019_64
     Qt5_DIR: "$QT_VERSION/$QT_TOOLCHAIN/lib/cmake/Qt5"
-#    BOOST_VERSION: 1.67.0
-#    BOOST_INSTALLER_FILE: boost_1_67_0-msvc-14.1-64.exe
+    #    BOOST_VERSION: 1.67.0
+    #    BOOST_INSTALLER_FILE: boost_1_67_0-msvc-14.1-64.exe
     PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
   before_script:
-#    - choco install nsis -y
+    #    - choco install nsis -y
     - choco install pandoc -y --ia=ALLUSERS=1
     - choco install cmake -y --installargs 'ADD_CMAKE_TO_PATH=System'
     - choco install git.install -y --params "/GitOnlyOnPath /SChannel /NoAutoCrlf"
     - choco install python -y --params "/quiet /InstallAllUsers=1 /Include_doc=0 /Include_debug=1 /CompileAll=1 /PrependPath=1 /Include_dev=1 /Include_exe=1 /InstallLauncherAllUsers=1 /TargetDir=$($env:PYTHON_PATH) /Include_lib=1 /Include_pip=1 /Include_symbols=1 /Include_tcltk=0 /Include_test=0 /Include_tools=1"
-#    - choco install wixtoolset -y
-#    - curl.exe -L -o boost-installer.exe "https://downloads.sourceforge.net/project/boost/boost-binaries/$env:BOOST_VERSION/$env:BOOST_INSTALLER_FILE"
-#    - ./boost-installer.exe /VERYSILENT
+    #    - choco install wixtoolset -y
+    #    - curl.exe -L -o boost-installer.exe "https://downloads.sourceforge.net/project/boost/boost-binaries/$env:BOOST_VERSION/$env:BOOST_INSTALLER_FILE"
+    #    - ./boost-installer.exe /VERYSILENT
     - refreshenv
-#    - vcpkg install boost-locale boost-date-time
+    #    - vcpkg install boost-locale boost-date-time
     - $env:Path += ";$($env:PYTHON_PATH);$($env:PYTHON_PATH)\Scripts;$($env:USER_PYTHON_PATH)\Scripts;$($env:NSIS_PATH);C:\Program Files\CMake\bin"
     - setx Path "$($env:Path)"
     - python -m ensurepip
-#    - pip install requests semantic_version lxml
-#    - git clone https://github.com/engnr/qt-downloader.git
-#    - python qt-downloader\qt-downloader windows desktop "$env:QT_VERSION" "win64_$env:QT_TOOLCHAIN"
-#    - $env:Path += ";$env:QT_VERSION\$env:QT_TOOLCHAIN\bin"
+    - pip install requests semantic_version lxml
+    - git clone https://github.com/engnr/qt-downloader.git
+    - python qt-downloader\qt-downloader windows desktop "$env:QT_VERSION" "win64_$env:QT_TOOLCHAIN"
+    - $env:Path += ";$env:QT_VERSION\$env:QT_TOOLCHAIN\bin"
     - setx Path "$($env:Path)"
     - pip install conan
-    - conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
+#    - conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
     - conan install . -s build_type=Release --install-folder=build
     - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=Off -S . -B build
 
