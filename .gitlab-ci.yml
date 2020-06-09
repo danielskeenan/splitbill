@@ -41,16 +41,16 @@ stages:
     - $env:Path += ";$($env:PYTHON_PATH);$($env:PYTHON_PATH)\Scripts;$($env:USER_PYTHON_PATH)\Scripts;$($env:NSIS_PATH);C:\Program Files\CMake\bin"
     - setx Path "$($env:Path)"
     - python -m ensurepip
-    - pip install requests semantic_version lxml
-    - git clone https://github.com/engnr/qt-downloader.git
-    - python qt-downloader\qt-downloader windows desktop "$env:QT_VERSION" "win64_$env:QT_TOOLCHAIN"
-    - $env:Path += ";$($pwd.path)\$env:QT_VERSION\$env:QT_TOOLCHAIN\bin"
-    - setx Path "$($env:Path)"
+#    - pip install requests semantic_version lxml
+#    - git clone https://github.com/engnr/qt-downloader.git
+#    - python qt-downloader\qt-downloader windows desktop "$env:QT_VERSION" "win64_$env:QT_TOOLCHAIN"
+#    - $env:Path += ";$($pwd.path)\$env:QT_VERSION\$env:QT_TOOLCHAIN\bin"
+#    - setx Path "$($env:Path)"
     - pip install conan
     - conan profile new --detect --force default
     - conan profile show default
 #    - conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
-    - conan install . --profile=default -s build_type=Release --install-folder=build
+    - conan install . --profile=default --build missing --install-folder=build
     - cat build/conan.lock
     - cat build/conaninfo.txt
     - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=Off -S . -B build
