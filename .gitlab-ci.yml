@@ -30,14 +30,14 @@ stages:
   before_script:
     # Setup environment
     - Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
-    - choco install visualstudio2019buildtools -y
-    - choco install visualstudio2019-workload-vctools -y
     - choco install vswhere -y
     - refreshenv
     # Loads Visual Studio tools into the PATH
-    - vswhere -all -nologo -products *
-    - Split-Path -Path (vswhere -all -nologo -products * -property productpath) -parent | ls
-    - '& (Join-Path (Split-Path -Path (vswhere -all -nologo -requires "Microsoft.VisualStudio.Component.VC.Tools.x86.x64" -products * -latest -property productpath) -parent) -childPath "Launch-VsDevShell.ps1")'
+    - $vsconfig = $(convertfrom-json ((iex "vswhere -all -nologo -requires 'Microsoft.VisualStudio.Component.VC.Tools.x86.x64' -products * -latest -format json") -join ""))
+    - $instanceId = $vsconfig.instanceid
+    - $bootstrapper = join-path $vsconfig.installationPath "Common7\Tools\Microsoft.VisualStudio.DevShell.dll"
+    - import-module $bootstrapper
+    - try { enter-vsdevshell $instanceId } catch {}
     # Install deps
     - choco install nsis -y
     - choco install pandoc -y --ia=ALLUSERS=1
