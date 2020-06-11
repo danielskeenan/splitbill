@@ -32,7 +32,7 @@ stages:
     - Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
     - choco install vswhere -y
     - refreshenv
-    # Loads Visual Studio tools into the PATH
+    # Loads Visual Studio tools into the PATH (borrowed from https://gist.github.com/oising/028c8182e1940d3f7e661dabec4f673b)
     - $vsconfig = $(convertfrom-json ((iex "vswhere -all -nologo -requires 'Microsoft.VisualStudio.Component.VC.Tools.x86.x64' -products * -latest -format json") -join ""))
     - $instanceId = $vsconfig.instanceid
     - $bootstrapper = join-path $vsconfig.installationPath "Common7\Tools\Microsoft.VisualStudio.DevShell.dll"
@@ -49,8 +49,8 @@ stages:
     #    - ./boost-installer.exe /VERYSILENT
     - refreshenv
     #    - vcpkg install boost-locale boost-date-time
-    #    - $env:Path += ";$($env:PYTHON_PATH);$($env:PYTHON_PATH)\Scripts;$($env:USER_PYTHON_PATH)\Scripts;$($env:NSIS_PATH);C:\Program Files\CMake\bin"
-    #    - setx Path "$($env:Path)"
+    - $env:Path += ";$($env:PYTHON_PATH);$($env:PYTHON_PATH)\Scripts;$($env:USER_PYTHON_PATH)\Scripts"
+    - setx Path "$($env:Path)"
     - python -m ensurepip
     # Get Qt
     - pip install requests semantic_version lxml
