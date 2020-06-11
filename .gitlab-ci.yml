@@ -30,6 +30,8 @@ stages:
   before_script:
     # Setup environment
     - Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
+    # Horrible kludge until https://github.com/chocolatey/choco/issues/89 is finally fixed
+    - rm -Path "$env:ChocolateyInstall\bin\cpack.exe" -Force
     - choco install vswhere -y
     - refreshenv
     # Install deps
