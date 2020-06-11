@@ -30,6 +30,8 @@ stages:
   before_script:
     # Setup environment
     - Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
+    - choco install visualstudio2019buildtools -y
+    - choco install visualstudio2019-workload-vctools -y
     - choco install vswhere -y
     - refreshenv
     # Loads Visual Studio tools into the PATH
