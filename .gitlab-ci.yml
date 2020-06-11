@@ -32,12 +32,6 @@ stages:
     - Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
     - choco install vswhere -y
     - refreshenv
-    # Loads Visual Studio tools into the PATH (borrowed from https://gist.github.com/oising/028c8182e1940d3f7e661dabec4f673b)
-    - $vsconfig = $(convertfrom-json ((iex "vswhere -all -nologo -requires 'Microsoft.VisualStudio.Component.VC.Tools.x86.x64' -products * -latest -format json") -join ""))
-    - $instanceId = $vsconfig.instanceid
-    - $bootstrapper = join-path $vsconfig.installationPath "Common7\Tools\Microsoft.VisualStudio.DevShell.dll"
-    - import-module $bootstrapper
-    - try { enter-vsdevshell $instanceId } catch {}
     # Install deps
     - choco install nsis -y
     - choco install pandoc -y --ia=ALLUSERS=1
@@ -67,6 +61,12 @@ stages:
     - conan install . --profile=default --install-folder=build
     - cat build/conan.lock
     - cat build/conaninfo.txt
+    # Loads Visual Studio tools into the PATH (borrowed from https://gist.github.com/oising/028c8182e1940d3f7e661dabec4f673b)
+    - $vsconfig = $(convertfrom-json ((iex "vswhere -all -nologo -requires 'Microsoft.VisualStudio.Component.VC.Tools.x86.x64' -products * -latest -format json") -join ""))
+    - $instanceId = $vsconfig.instanceid
+    - $bootstrapper = join-path $vsconfig.installationPath "Common7\Tools\Microsoft.VisualStudio.DevShell.dll"
+    - import-module $bootstrapper
+    - try { enter-vsdevshell $instanceId } catch {}
     # Create buildsystem
     - cmake -DCMAKE_BUILD_TYPE=Release -G "NMake Makefiles" -DQt5_DIR="$($pwd.path)/.qt/$QT_VERSION/$QT_TOOLCHAIN/lib/cmake/Qt5" -DBUILD_TESTING=Off -S . -B build
   cache:
