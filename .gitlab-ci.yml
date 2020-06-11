@@ -20,12 +20,9 @@ stages:
     - windows
     - windows-1809
   variables:
-    CONAN_USER_HOME: "$CI_PROJECT_DIR"
-    PYTHON_PATH: 'C:\Python38'
+    CONAN_USER_HOME: "$CI_PROJECT_DIR/.cache"
     QT_VERSION: 5.15.0
     QT_TOOLCHAIN: msvc2019_64
-    #    BOOST_VERSION: 1.67.0
-    #    BOOST_INSTALLER_FILE: boost_1_67_0-msvc-14.1-64.exe
     PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
   before_script:
     # Setup environment
@@ -40,13 +37,7 @@ stages:
     - choco install cmake -y --installargs 'ADD_CMAKE_TO_PATH=System'
     - choco install git.install -y --params "/GitOnlyOnPath /SChannel /NoAutoCrlf"
     - choco install python -y --params "/quiet /InstallAllUsers=1 /Include_doc=0 /Include_debug=1 /CompileAll=1 /PrependPath=1 /Include_dev=1 /Include_exe=1 /InstallLauncherAllUsers=1 /TargetDir=$($env:PYTHON_PATH) /Include_lib=1 /Include_pip=1 /Include_symbols=1 /Include_tcltk=0 /Include_test=0 /Include_tools=1"
-    #    - choco install wixtoolset -y
-    #    - curl.exe -L -o boost-installer.exe "https://downloads.sourceforge.net/project/boost/boost-binaries/$env:BOOST_VERSION/$env:BOOST_INSTALLER_FILE"
-    #    - ./boost-installer.exe /VERYSILENT
     - refreshenv
-    #    - vcpkg install boost-locale boost-date-time
-    - $env:Path += ";$($env:PYTHON_PATH);$($env:PYTHON_PATH)\Scripts;$($env:USER_PYTHON_PATH)\Scripts"
-    - setx Path "$($env:Path)"
     - python -m ensurepip
     # Get Qt
     - pip install requests semantic_version lxml
@@ -58,7 +49,6 @@ stages:
     # Build deps
     - pip install conan
     - conan profile new --detect --force default
-    #    - conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
     - conan install . --profile=default --install-folder=build
     # Loads Visual Studio tools into the PATH (borrowed from https://gist.github.com/oising/028c8182e1940d3f7e661dabec4f673b)
     - $vsconfig = $(convertfrom-json ((iex "vswhere -all -nologo -requires 'Microsoft.VisualStudio.Component.VC.Tools.x86.x64' -products * -latest -format json") -join ""))
@@ -71,7 +61,7 @@ stages:
   cache:
     key: "windows-1809"
     paths:
-      - ".conan"
+      - ".cache"
 
 test-ubuntu-20-04:
   extends: .ubuntu-20-04
@@ -103,10 +93,7 @@ build-ubuntu-20-04:
     - cpack -G "TGZ;TBZ2;DEB" -B "$(pwd)/packages"
   artifacts:
     paths:
-      - build/packages/splitbill-*.tar.gz
-      - build/packages/splitbill-*.tar.bz2
-      - build/packages/splitbill-*.deb
-      - build/packages/splitbill-*.md5
+      - build/packages/splitbill-*.*
     expire_in: 1 week
 
 build-windows-1809:
