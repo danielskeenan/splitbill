@@ -28,7 +28,13 @@ stages:
     #    BOOST_INSTALLER_FILE: boost_1_67_0-msvc-14.1-64.exe
     PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
   before_script:
+    # Setup environment
     - Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
+    - choco install vswhere -y
+    - refreshenv
+    # Loads Visual Studio tools into the PATH
+    - & (Join-Path (Split-Path -Path (vswhere -all -nologo -requires 'Microsoft.VisualStudio.Component.VC.Tools.x86.x64' -products * -latest -property productpath) -parent) -childPath 'Launch-VsDevShell.ps1')
+    # Install deps
     - choco install nsis -y
     - choco install pandoc -y --ia=ALLUSERS=1
     - choco install cmake -y --installargs 'ADD_CMAKE_TO_PATH=System'
@@ -42,11 +48,13 @@ stages:
     #    - $env:Path += ";$($env:PYTHON_PATH);$($env:PYTHON_PATH)\Scripts;$($env:USER_PYTHON_PATH)\Scripts;$($env:NSIS_PATH);C:\Program Files\CMake\bin"
     #    - setx Path "$($env:Path)"
     - python -m ensurepip
+    # Get Qt
     - pip install requests semantic_version lxml
     - git clone https://github.com/engnr/qt-downloader.git
     - python qt-downloader\qt-downloader --output=.qt windows desktop "$env:QT_VERSION" "win64_$env:QT_TOOLCHAIN"
     - $env:Path += ";$($pwd.path)\$env:QT_VERSION\$env:QT_TOOLCHAIN\bin"
     - setx Path "$($env:Path)"
+    # Build deps
     - pip install conan
     - conan profile new --detect --force default
     - conan profile show default
@@ -54,6 +62,7 @@ stages:
     - conan install . --profile=default --install-folder=build
     - cat build/conan.lock
     - cat build/conaninfo.txt
+    # Create buildsystem
     - cmake -DCMAKE_BUILD_TYPE=Release -G "NMake Makefiles" -DQt5_DIR="$($pwd.path)/.qt/$QT_VERSION/$QT_TOOLCHAIN/lib/cmake/Qt5" -DBUILD_TESTING=Off -S . -B build
   cache:
     key: "windows-1809"
