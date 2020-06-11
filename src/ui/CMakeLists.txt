@@ -14,7 +14,7 @@ find_library(BOOST_LOCALE NAMES boost_locale libboost_locale)
 # Config
 configure_file(config.h.in config.h)
 
-add_executable(splitbill
+add_executable(splitbill WIN32 MACOSX_BUNDLE
     config.h
     trans.h
     main.cpp
@@ -44,5 +44,5 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
     target_link_options(splitbill PRIVATE "/NODEFAULTLIB:library")
     # Bundle Qt runtime
     include("${CMAKE_CURRENT_LIST_DIR}/../../cmake/Windeployqt.cmake")
-    windeployqt(splitbill qt)
+    windeployqt(splitbill bin)
 endif ()

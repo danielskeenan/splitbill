@@ -2,7 +2,7 @@ install(TARGETS splitbill RUNTIME BUNDLE)
 
 set(CPACK_PACKAGE_VENDOR "${PROJECT_AUTHOR}")
 set(CPACK_PACKAGE_CONTACT "${PROJECT_AUTHOR} <dk@dankeenan.org>")
-set(CPACK_PACKAGE_ICON "${PROJECT_SOURCE_DIR}/resources/app-icon.svg")
+#set(CPACK_PACKAGE_ICON "${PROJECT_SOURCE_DIR}/resources/app-icon.svg")
 set(CPACK_PACKAGE_CHECKSUM "MD5")
 include("${CMAKE_CURRENT_LIST_DIR}/license.cmake")
 set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_BINARY_DIR}/LICENSE.html")
@@ -28,9 +28,10 @@ endif ()
 
 # Windows metadata
 if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    set(CPACK_PACKAGE_INSTALL_DIRECTORY "${CMAKE_PROJECT_NAME}")
+    set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_BINARY_DIR}/LICENSE.rtf")
     set(CPACK_NSIS_DISPLAY_NAME "Split Bill")
     set(CPACK_NSIS_PACKAGE_NAME "Split Bill")
-    set(CPACK_WIX_LICENSE_RTF "${PROJECT_BINARY_DIR}/LICENSE.rtf")
     set(CMAKE_INSTALL_UCRT_LIBRARIES TRUE)
     include(InstallRequiredSystemLibraries)
 #
