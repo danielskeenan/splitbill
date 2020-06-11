@@ -54,6 +54,7 @@ stages:
     - python -m ensurepip
     # Get Qt
     - pip install requests semantic_version lxml
+    - refreshenv
     - git clone https://github.com/engnr/qt-downloader.git
     - python qt-downloader\qt-downloader --output=.qt windows desktop "$env:QT_VERSION" "win64_$env:QT_TOOLCHAIN"
     - $env:Path += ";$($pwd.path)\$env:QT_VERSION\$env:QT_TOOLCHAIN\bin"
