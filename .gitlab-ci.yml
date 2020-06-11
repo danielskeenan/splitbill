@@ -28,7 +28,8 @@ stages:
     #    BOOST_INSTALLER_FILE: boost_1_67_0-msvc-14.1-64.exe
     PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
   before_script:
-    #    - choco install nsis -y
+    - Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
+    - choco install nsis -y
     - choco install pandoc -y --ia=ALLUSERS=1
     - choco install cmake -y --installargs 'ADD_CMAKE_TO_PATH=System'
     - choco install git.install -y --params "/GitOnlyOnPath /SChannel /NoAutoCrlf"
@@ -38,8 +39,8 @@ stages:
     #    - ./boost-installer.exe /VERYSILENT
     - refreshenv
     #    - vcpkg install boost-locale boost-date-time
-    - $env:Path += ";$($env:PYTHON_PATH);$($env:PYTHON_PATH)\Scripts;$($env:USER_PYTHON_PATH)\Scripts;$($env:NSIS_PATH);C:\Program Files\CMake\bin"
-    - setx Path "$($env:Path)"
+    #    - $env:Path += ";$($env:PYTHON_PATH);$($env:PYTHON_PATH)\Scripts;$($env:USER_PYTHON_PATH)\Scripts;$($env:NSIS_PATH);C:\Program Files\CMake\bin"
+    #    - setx Path "$($env:Path)"
     - python -m ensurepip
     - pip install requests semantic_version lxml
     - git clone https://github.com/engnr/qt-downloader.git
@@ -53,7 +54,7 @@ stages:
     - conan install . --profile=default --install-folder=build
     - cat build/conan.lock
     - cat build/conaninfo.txt
-    - cmake -DCMAKE_BUILD_TYPE=Release -DQt5_DIR="$($pwd.path)/.qt/$QT_VERSION/$QT_TOOLCHAIN/lib/cmake/Qt5" -DBUILD_TESTING=Off -S . -B build
+    - cmake -DCMAKE_BUILD_TYPE=Release -G "NMake Makefiles" -DQt5_DIR="$($pwd.path)/.qt/$QT_VERSION/$QT_TOOLCHAIN/lib/cmake/Qt5" -DBUILD_TESTING=Off -S . -B build
   cache:
     key: "windows-1809"
     paths:
@@ -101,7 +102,7 @@ build-windows-1809:
   needs:
     - test-windows-1809
   script:
-    - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_PACKAGE=On build
+    - cmake -DBUILD_PACKAGE=On build
     - cmake --build build
     - cd build
     - cpack -G "NSIS" -B "$($pwd.path)/packages"
