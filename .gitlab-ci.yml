@@ -33,7 +33,7 @@ stages:
     - choco install vswhere -y
     - refreshenv
     # Loads Visual Studio tools into the PATH
-    - & (Join-Path (Split-Path -Path (vswhere -all -nologo -requires 'Microsoft.VisualStudio.Component.VC.Tools.x86.x64' -products * -latest -property productpath) -parent) -childPath 'Launch-VsDevShell.ps1')
+    - "& (Join-Path (Split-Path -Path (vswhere -all -nologo -requires 'Microsoft.VisualStudio.Component.VC.Tools.x86.x64' -products * -latest -property productpath) -parent) -childPath 'Launch-VsDevShell.ps1')"
     # Install deps
     - choco install nsis -y
     - choco install pandoc -y --ia=ALLUSERS=1
