@@ -9,7 +9,7 @@ set(autouic_options
     )
 
 # Boost Locale
-find_library(BOOST_LOCALE NAMES boost_locale libboost_locale)
+find_library(BOOST_LOCALE NAMES boost_locale boost_locale-mt libboost_locale libboost_locale-mt)
 
 # Config
 configure_file(config.h.in config.h)
