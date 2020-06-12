@@ -160,6 +160,12 @@ QWidget *MainWindow::InitPeopleTable() {
   people_list->setLayout(people_layout);
   widgets_.peopleView = new QTableView(this);
   widgets_.peopleView->setSelectionMode(QTableView::SelectionMode::ExtendedSelection);
+  for (const auto &person : Settings::GetDefaultPeople()) {
+    PersonPeriod person_period(person.toStdString(),
+                               widgets_.billDateStart->date().toString(Qt::DateFormat::ISODate).toStdString(),
+                               widgets_.billDateEnd->date().toString(Qt::DateFormat::ISODate).toStdString());
+    people_->append(person_period);
+  }
   person_list_model_ = new PersonListModel(people_, this);
   widgets_.peopleView->setModel(person_list_model_);
   people_layout->addWidget(widgets_.peopleView);

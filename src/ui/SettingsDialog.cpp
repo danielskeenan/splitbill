@@ -31,6 +31,7 @@ void SettingsDialog::InitUi() {
   // Form
   // Default tax rate
   widgets_.defaultTaxRate = new QDoubleSpinBox(this);
+  widgets_.defaultTaxRate->setValue(Settings::GetDefaultTaxRate() * 100);
   widgets_.defaultTaxRate->setMinimum(0);
   widgets_.defaultTaxRate->setMaximum(100);
   widgets_.defaultTaxRate->setDecimals(3);
@@ -94,7 +95,7 @@ void SettingsDialog::s_SelectedPersonChanged(QListWidgetItem *current, QListWidg
 }
 
 void SettingsDialog::accept() {
-  Settings::SetDefaultTaxRate(widgets_.defaultTaxRate->value());
+  Settings::SetDefaultTaxRate(widgets_.defaultTaxRate->value() / 100);
   QStringList default_people;
   default_people.reserve(widgets_.defaultPeople->count());
   for (int i = 0; i < widgets_.defaultPeople->count(); i++) {

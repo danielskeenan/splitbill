@@ -7,6 +7,7 @@
 
 #include <QtCore/QSet>
 #include "BillLineModel.h"
+#include "Settings.h"
 #include "trans.h"
 
 namespace splitbill::ui {
@@ -150,6 +151,7 @@ void BillLineModel::AddLine(const BillLine &line) {
 void BillLineModel::AddLine(const QModelIndex &index) {
   const QModelIndex parent;
   BillLine line;
+  line.tax_rate = Settings::GetDefaultTaxRate();
 
   if (index.isValid()) {
     beginInsertRows(parent, index.row(), index.row());
