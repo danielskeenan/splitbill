@@ -16,6 +16,8 @@ stages:
     - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=Off -S . -B build
 
 .windows-1809:
+  # Windows jobs are designed to run on gitlab.com shared windows runners
+  # https://gitlab.com/gitlab-org/ci-cd/shared-runners/images/gcp/windows-containers/blob/master/cookbooks/preinstalled-software/README.md
   tags:
     - windows
     - windows-1809
@@ -63,6 +65,35 @@ stages:
     paths:
       - ".cache"
 
+.macos-13:
+  # The Mac OS jobs assume that several things are already installed on the build machine:
+  # Python 3, pandoc, cmake, git, p7zip, and the XCode toolchain
+  tags:
+    - darwin
+    - darwin-13
+  variables:
+    CONAN_USER_HOME: "$CI_PROJECT_DIR/.cache"
+    QT_VERSION: 5.15.0
+    PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  before_script:
+    - export CMAKE_BUILD_PARALLEL_LEVEL=$(nproc)
+    - export CTEST_PARALLEL_LEVEL=$(nproc)
+    # Get Qt
+    - pip install requests semantic_version lxml
+    - git clone https://github.com/engnr/qt-downloader.git
+    - python qt-downloader\qt-downloader --output=.qt macos desktop "${QT_VERSION}" "clang_64"
+    - export PATH="$(pwd)\${QT_VERSION}\clang_64\bin:${PATH}"
+    # Build deps
+    - pip install conan
+    - conan profile new --detect --force default
+    - conan install . --profile=default --install-folder=build
+    # Create buildsystem
+    - cmake -DCMAKE_BUILD_TYPE=Release -DQt5_DIR="$(pwd)/.qt/${QT_VERSION}/clang_64/lib/cmake/Qt5" -DBUILD_TESTING=Off -S . -B build
+  cache:
+    key: "macos-13"
+    paths:
+      - ".cache"
+
 test-ubuntu-20-04:
   extends: .ubuntu-20-04
   stage: test
@@ -74,6 +105,15 @@ test-ubuntu-20-04:
 
 test-windows-1809:
   extends: .windows-1809
+  stage: test
+  script:
+    - cmake -DBUILD_TESTING=On build
+    - cmake --build build --target splitbill_lib_test
+    - cd build
+    - ctest
+
+test-macos-13:
+  extends: .macos-13
   stage: test
   script:
     - cmake -DBUILD_TESTING=On build
