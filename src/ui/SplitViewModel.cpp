@@ -76,8 +76,8 @@ void SplitViewModel::Update(const QDate &start, const QDate &end, QVector<Person
   std::vector new_portions = bill_->Split(
       start.toString(Qt::DateFormat::ISODate).toStdString(),
       end.toString(Qt::DateFormat::ISODate).toStdString(),
-      people_periods.toStdVector(),
-      people.toStdVector()
+      std::vector<PersonPeriod>(people_periods.cbegin(), people_periods.cend()),
+      std::vector<std::string>(people.cbegin(), people.cend())
   );
 
   // Update the data representation

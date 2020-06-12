@@ -196,7 +196,7 @@ void BillLineModel::RemoveLines(const QModelIndexList &indexes) {
     return;
   }
 
-  QList<int> row_list = selected_rows.toList();
+  QList<int> row_list = selected_rows.values();
   // Reverse sort the list to remove the last affected row first.  This keeps indexes consistent.
   std::sort(row_list.begin(), row_list.end(), std::greater<>());
   const QModelIndex parent;
