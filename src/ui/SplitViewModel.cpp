@@ -69,7 +69,9 @@ void SplitViewModel::Update(const QDate &start, const QDate &end, QVector<Person
 
   QVector<std::string> people;
   for (const auto &period : people_periods) {
-    people.append(period.GetName());
+    if (!people.contains(period.GetName())) {
+      people.append(period.GetName());
+    }
   }
 
   // Get the new bill portions

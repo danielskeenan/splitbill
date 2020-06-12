@@ -176,6 +176,8 @@ QWidget *MainWindow::InitSplitTable() {
   auto *layout = new QVBoxLayout;
   split_view->setLayout(layout);
   widgets_.splitView = new QTableView(this);
+  widgets_.splitView->setSelectionMode(QTableView::SelectionMode::SingleSelection);
+  widgets_.splitView->setSelectionBehavior(QTableView::SelectionBehavior::SelectItems);
   split_view_model_ = new SplitViewModel(bill_, this);
   widgets_.splitView->setModel(split_view_model_);
   layout->addWidget(widgets_.splitView);
