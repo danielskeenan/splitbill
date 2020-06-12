@@ -99,10 +99,9 @@ QVariant PersonListModel::headerData(int section, Qt::Orientation orientation, i
   return QVariant();
 }
 
-void PersonListModel::AddLine(const QModelIndex &index) {
+void PersonListModel::AddLine(const PersonPeriod &person_period, const QModelIndex &index) {
   const QModelIndex parent;
 
-  PersonPeriod person_period;
   if (index.isValid()) {
     beginInsertRows(parent, index.row(), index.row());
     people_->insert(index.row(), person_period);

@@ -205,7 +205,10 @@ void MainWindow::s_RemoveBillLine() {
 void MainWindow::s_AddPerson() {
   QItemSelectionModel *selection = widgets_.peopleView->selectionModel();
   QModelIndex selected = selection->currentIndex();
-  person_list_model_->AddLine(selected);
+  PersonPeriod person_period(_("Default person name", "New Person").toStdString(),
+                             widgets_.billDateStart->date().toString(Qt::DateFormat::ISODate).toStdString(),
+                             widgets_.billDateEnd->date().toString(Qt::DateFormat::ISODate).toStdString());
+  person_list_model_->AddLine(person_period, selected);
 }
 
 void MainWindow::s_RemovePerson() {

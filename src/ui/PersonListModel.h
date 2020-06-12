@@ -32,7 +32,7 @@ class PersonListModel : public QAbstractTableModel {
   bool setData(const QModelIndex &index, const QVariant &value, int role) override;
   QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
 
-  void AddLine(const QModelIndex &index = QModelIndex());
+  void AddLine(const PersonPeriod &person_period, const QModelIndex &index);
   void RemoveLine(const size_t &pos);
   void RemoveLine(const QModelIndex &index);
   void RemoveLines(const QModelIndexList &indexes);
