@@ -5,7 +5,7 @@ project(splitbill
 set(PROJECT_AUTHOR "Dan Keenan")
 set(PROJECT_AUTHOR_DOMAIN "org.dankeenan")
 set(CMAKE_CXX_STANDARD 17)
-if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+if (CMAKE_SYSTEM_NAME IN_LIST "Windows;Darwin")
     include(cmake/conan.cmake)
 endif ()
 add_definitions(-DBOOST_AUTO_LINK_SYSTEM)
