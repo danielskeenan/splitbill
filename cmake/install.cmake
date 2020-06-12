@@ -1,5 +1,5 @@
 if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    install(TARGETS splitbill BUNDLE DESTINATION "")
+    install(TARGETS splitbill BUNDLE DESTINATION "/")
 else ()
     install(TARGETS splitbill RUNTIME)
 endif ()

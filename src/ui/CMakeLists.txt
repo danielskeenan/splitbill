@@ -55,8 +55,8 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
     endif ()
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     file(COPY "${PROJECT_SOURCE_DIR}/resources/app-icon.icns" DESTINATION "${PROJECT_BINARY_DIR}/meta/splitbill.icns")
-        set_target_properties(splitbill PROPERTIES
-            RESOURCE "${PROJECT_BINARY_DIR}/meta/splitbill.icns")
+    set_target_properties(splitbill PROPERTIES
+        RESOURCE "${PROJECT_BINARY_DIR}/meta/splitbill.icns")
     if (BUILD_PACKAGE)
         find_program(MACDEPLOYQT_PROG macdeployqt)
         add_custom_command(TARGET splitbill POST_BUILD
