@@ -47,9 +47,19 @@ target_include_directories(splitbill PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
 # Qt packaging
 if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
-#    target_compile_options(splitbill PRIVATE "/MDd")
     target_link_options(splitbill PRIVATE "/NODEFAULTLIB:library")
     # Bundle Qt runtime
-    include("${CMAKE_CURRENT_LIST_DIR}/../../cmake/Windeployqt.cmake")
-    windeployqt(splitbill bin)
+    if (BUILD_PACKAGE)
+        include("${PROJECT_SOURCE_DIR}/cmake/Windeployqt.cmake")
+        windeployqt(splitbill bin)
+    endif ()
+elseif (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    #    set_target_properties(splitbill PROPERTIES
+    #        RESOURCE ${PROJECT_SOURCE_DIR}/resources/app-icon.icns)
+    if (BUILD_PACKAGE)
+        find_program(MACDEPLOYQT_PROG macdeployqt)
+        add_custom_command(TARGET splitbill POST_BUILD
+            COMMENT "Running macdeployqt"
+            COMMAND ${MACDEPLOYQT_PROG} ARGS $<TARGET_FILE:splitbill> -verbose=2)
+    endif ()
 endif ()

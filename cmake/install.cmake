@@ -1,5 +1,8 @@
-install(TARGETS splitbill RUNTIME)
-install(TARGETS splitbill BUNDLE DESTINATION /)
+if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    install(TARGETS splitbill BUNDLE DESTINATION /)
+else ()
+    install(TARGETS splitbill RUNTIME)
+endif ()
 
 set(CPACK_PACKAGE_VENDOR "${PROJECT_AUTHOR}")
 set(CPACK_PACKAGE_CONTACT "${PROJECT_AUTHOR} <dk@dankeenan.org>")
@@ -41,12 +44,6 @@ endif ()
 # Mac OS metadata
 if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_BINARY_DIR}/LICENSE.rtf")
-
-    # Run macdeployqt
-    find_program(MACDEPLOYQT_PROG macdeployqt)
-    add_custom_command(TARGET splitbill POST_BUILD
-        COMMENT "Running macdeployqt"
-        COMMAND ${MACDEPLOYQT_PROG} ARGS $<TARGET_FILE:splitbill> -verbose=2)
 endif ()
 
 include(CPack)
