@@ -76,13 +76,13 @@ stages:
     QT_VERSION: 5.15.0
     PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
   before_script:
-    - export CMAKE_BUILD_PARALLEL_LEVEL=$(nproc)
-    - export CTEST_PARALLEL_LEVEL=$(nproc)
+    - export CMAKE_BUILD_PARALLEL_LEVEL=$(sysctl -n hw.logicalcpu)
+    - export CTEST_PARALLEL_LEVEL=$(sysctl -n hw.logicalcpu)
     # Get Qt
     - pip install requests semantic_version lxml
     - git clone https://github.com/engnr/qt-downloader.git
-    - python qt-downloader\qt-downloader --output=.qt macos desktop "${QT_VERSION}" "clang_64"
-    - export PATH="$(pwd)\${QT_VERSION}\clang_64\bin:${PATH}"
+    - python qt-downloader/qt-downloader --output=.qt macos desktop "${QT_VERSION}" "clang_64"
+    - export PATH="$(pwd)/${QT_VERSION}/clang_64/bin:${PATH}"
     # Build deps
     - pip install conan
     - conan profile new --detect --force default
