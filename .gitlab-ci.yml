@@ -131,7 +131,7 @@ build-windows-1809:
     - cmake -DBUILD_PACKAGE=On build
     - cmake --build build
     - cd build
-    - cpack -G "NSIS" -B "$($pwd.path)/packages"
+    - cpack -G "ZIP;NSIS" -B "$($pwd.path)/packages"
   artifacts:
     paths:
       - build/packages/splitbill-*.*
@@ -146,7 +146,7 @@ build-macos-13:
     - cmake -DBUILD_PACKAGE=On build
     - cmake --build build
     - cd build
-    - cpack -G "DragNDrop" -B "$(pwd)/packages"
+    - cpack -G "ZIP;DragNDrop" -B "$(pwd)/packages"
   artifacts:
     paths:
       - build/packages/splitbill-*.*
