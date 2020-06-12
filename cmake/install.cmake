@@ -1,4 +1,4 @@
-install(TARGETS splitbill RUNTIME BUNDLE)
+install(TARGETS splitbill RUNTIME)
 
 set(CPACK_PACKAGE_VENDOR "${PROJECT_AUTHOR}")
 set(CPACK_PACKAGE_CONTACT "${PROJECT_AUTHOR} <dk@dankeenan.org>")
@@ -40,6 +40,8 @@ endif ()
 if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     set(CPACK_BUNDLE_NAME "${PROJECT_DISPLAY_NAME}")
     set(CPACK_BUNDLE_ICON "${PROJECT_SOURCE_DIR}/resources/app-icon.icns")
+    set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_BINARY_DIR}/LICENSE.rtf")
+    set(CPACK_BUNDLE_STARTUP_COMMAND "${PROJECT_BINARY_DIR}/src/ui/splitbill")
 
     # Info.plist file is filled in with configure-time info
     set(CPACK_BUNDLE_PLIST "${PROJECT_BINARY_DIR}/meta/Info.plist")

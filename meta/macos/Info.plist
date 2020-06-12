@@ -15,6 +15,6 @@
 	<key>CFBundleSignature</key>
 	<string>SPBL</string>
 	<key>CFBundleExecutable</key>
-	<string>splitbill</string>
+	<string>${CPACK_BUNDLE_NAME}</string>
 </dict>
 </plist>
