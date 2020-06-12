@@ -14,7 +14,7 @@ find_library(BOOST_LOCALE NAMES boost_locale libboost_locale)
 # Config
 configure_file(config.h.in config.h)
 
-add_executable(splitbill WIN32 MACOSX_BUNDLE
+add_executable(splitbill WIN32
     config.h
     trans.h
     main.cpp

@@ -6,7 +6,7 @@ set(CPACK_PACKAGE_CONTACT "${PROJECT_AUTHOR} <dk@dankeenan.org>")
 set(CPACK_PACKAGE_CHECKSUM "MD5")
 include("${CMAKE_CURRENT_LIST_DIR}/license.cmake")
 set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_BINARY_DIR}/LICENSE.html")
-set(CPACK_PACKAGE_EXECUTABLES "splitbill;Split Bill")
+set(CPACK_PACKAGE_EXECUTABLES "splitbill;${PROJECT_DISPLAY_NAME}")
 set(CPACK_MONOLITHIC_INSTALL On)
 
 # Linux metadata
@@ -30,14 +30,20 @@ endif ()
 if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
     set(CPACK_PACKAGE_INSTALL_DIRECTORY "${CMAKE_PROJECT_NAME}")
     set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_BINARY_DIR}/LICENSE.rtf")
-    set(CPACK_NSIS_DISPLAY_NAME "Split Bill")
-    set(CPACK_NSIS_PACKAGE_NAME "Split Bill")
+    set(CPACK_NSIS_DISPLAY_NAME "${PROJECT_DISPLAY_NAME}")
+    set(CPACK_NSIS_PACKAGE_NAME "${PROJECT_DISPLAY_NAME}")
     set(CMAKE_INSTALL_UCRT_LIBRARIES TRUE)
     include(InstallRequiredSystemLibraries)
-#
-#    # Bundle Qt runtime
-#    include("${CMAKE_CURRENT_LIST_DIR}/Windeployqt.cmake")
-#    windeployqt(splitbill qt)
+endif ()
+
+# Mac OS metadata
+if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    set(CPACK_BUNDLE_NAME "${PROJECT_DISPLAY_NAME}")
+    set(CPACK_BUNDLE_ICON "${PROJECT_SOURCE_DIR}/resources/app-icon.icns")
+
+    # Info.plist file is filled in with configure-time info
+    set(CPACK_BUNDLE_PLIST "${PROJECT_BINARY_DIR}/meta/Info.plist")
+    configure_file("${PROJECT_SOURCE_DIR}/meta/macos/Info.plist" "${CPACK_BUNDLE_PLIST}")
 endif ()
 
 include(CPack)

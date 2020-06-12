@@ -150,3 +150,18 @@ build-windows-1809:
     paths:
       - build/packages/splitbill-*.*
     expire_in: 1 week
+
+build-macos-13:
+  extends: .macos-13
+  stage: build
+  needs:
+    - test-macos-13
+  script:
+    - cmake -DBUILD_PACKAGE=On build
+    - cmake --build build
+    - cd build
+    - cpack -G "Bundle" -B "$(pwd)/packages"
+  artifacts:
+    paths:
+      - build/packages/splitbill-*.*
+    expire_in: 1 week

@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
   app.setOrganizationName(APP_AUTHOR);
   app.setOrganizationDomain(APP_DOMAIN);
   app.setApplicationName(APP_NAME);
-  app.setApplicationDisplayName(_("App name", APP_NAME));
+  app.setApplicationDisplayName(_("App name", APP_DISPLAY_NAME));
   app.setApplicationVersion(APP_VERSION);
   app.setWindowIcon(QIcon(":/app-icon"));
   splitbill::ui::MainWindow main_window;
