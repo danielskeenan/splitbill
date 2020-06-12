@@ -1,4 +1,4 @@
-install(TARGETS splitbill RUNTIME)
+install(TARGETS splitbill RUNTIME BUNDLE)
 
 set(CPACK_PACKAGE_VENDOR "${PROJECT_AUTHOR}")
 set(CPACK_PACKAGE_CONTACT "${PROJECT_AUTHOR} <dk@dankeenan.org>")
@@ -8,6 +8,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/license.cmake")
 set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_BINARY_DIR}/LICENSE.html")
 set(CPACK_PACKAGE_EXECUTABLES "splitbill;${PROJECT_DISPLAY_NAME}")
 set(CPACK_MONOLITHIC_INSTALL On)
+set(CPACK_STRIP_FILES On)
 
 # Linux metadata
 if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
@@ -38,14 +39,16 @@ endif ()
 
 # Mac OS metadata
 if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    set(CPACK_BUNDLE_NAME "${PROJECT_DISPLAY_NAME}")
-    set(CPACK_BUNDLE_ICON "${PROJECT_SOURCE_DIR}/resources/app-icon.icns")
     set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_BINARY_DIR}/LICENSE.rtf")
-    set(CPACK_BUNDLE_STARTUP_COMMAND "${PROJECT_BINARY_DIR}/src/ui/splitbill")
 
-    # Info.plist file is filled in with configure-time info
-    set(CPACK_BUNDLE_PLIST "${PROJECT_BINARY_DIR}/meta/Info.plist")
-    configure_file("${PROJECT_SOURCE_DIR}/meta/macos/Info.plist" "${CPACK_BUNDLE_PLIST}")
+    # Run macdeployqt
+    find_program(MACDEPLOYQT_PROG macdeployqt)
+    if (NOT MACDEPLOTQT_PROG)
+        message(FATAL_ERROR "Cannot find macdeployqt, needed for finalizing the application bundle.")
+    endif ()
+    add_custom_command(TARGET splitbill POST_BUILD
+        COMMENT "Running macdeployqt"
+        COMMAND ${MACDEPLOYQT_PROG} ARGS $<TARGET_FILE:splitbill> -verbose=2)
 endif ()
 
 include(CPack)

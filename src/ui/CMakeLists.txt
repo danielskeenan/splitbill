@@ -14,7 +14,7 @@ find_library(BOOST_LOCALE NAMES boost_locale boost_locale-mt libboost_locale lib
 # Config
 configure_file(config.h.in config.h)
 
-add_executable(splitbill WIN32
+add_executable(splitbill WIN32 MACOSX_BUNDLE
     config.h
     trans.h
     main.cpp
@@ -32,6 +32,13 @@ add_executable(splitbill WIN32
     SplitViewModel.h
     SplitViewModel.cpp
     )
+set_target_properties(splitbill PROPERTIES
+    MACOSX_BUNDLE_BUNDLE_NAME splitbill
+    MACOSX_BUNDLE_BUNDLE_VERSION ${CMAKE_PROJECT_VERSION}
+    MACOSX_BUNDLE_GUI_IDENTIFIER "${PROJECT_AUTHOR_DOMAIN}.${CMAKE_PROJECT_NAME}"
+    MACOSX_BUNDLE_ICON_FILE splitbill.icns
+    MACOSX_BUNDLE_LONG_VERSION_STRING ${CMAKE_PROJECT_VERSION}
+    MACOSX_BUNDLE_SHORT_VERSION_STRING ${CMAKE_PROJECT_VERSION})
 
 target_link_libraries(splitbill splitbill_lib)
 target_link_libraries(splitbill Qt5::Widgets)
