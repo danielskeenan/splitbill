@@ -13,14 +13,18 @@
 #include <QtWidgets/QDialogButtonBox>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QGroupBox>
+#include <QtWidgets/QMenuBar>
+#include <QtWidgets/QMenu>
 #include "Settings.h"
 #include "trans.h"
+#include "SettingsDialog.h"
 
 namespace splitbill::ui {
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), bill_(new Bill), people_(new QVector<PersonPeriod>) {
   InitUi();
+  InitMenu();
 }
 
 void MainWindow::InitUi() {
@@ -95,6 +99,13 @@ void MainWindow::InitUi() {
 
   // Split table
   rightLayout->addWidget(InitSplitTable());
+}
+
+void MainWindow::InitMenu() {
+  // Edit menu
+  QMenu *edit_menu = menuBar()->addMenu(_("Edit menu", "&Edit"));
+  QAction *edit_preferences = edit_menu->addAction(_("Edit preferences action", "&Preferences"));
+  connect(edit_preferences, &QAction::triggered, this, &MainWindow::s_Preferences);
 }
 
 QWidget *MainWindow::InitBillOverview() {
@@ -190,6 +201,11 @@ void MainWindow::closeEvent(QCloseEvent *event) {
   Settings::SetWindowPosition(pos());
   Settings::SetWindowSize(size());
   QWidget::closeEvent(event);
+}
+
+void MainWindow::s_Preferences() {
+  auto settings_dialog = new SettingsDialog(this);
+  settings_dialog->show();
 }
 
 void MainWindow::s_AddBillLine() {

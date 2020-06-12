@@ -46,6 +46,7 @@ class MainWindow : public QMainWindow {
   };
 
   void InitUi();
+  void InitMenu();
   QWidget *InitBillOverview();
   void InitBillLineTable();
   QWidget *InitPeopleTable();
@@ -59,6 +60,7 @@ class MainWindow : public QMainWindow {
   QPointer<SplitViewModel> split_view_model_;
 
  private slots:
+  void s_Preferences();
   void s_AddBillLine();
   void s_RemoveBillLine();
   void s_AddPerson();

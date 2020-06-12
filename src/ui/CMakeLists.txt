@@ -29,6 +29,8 @@ add_executable(splitbill WIN32 MACOSX_BUNDLE
     PersonListDelegate.cpp
     PersonListModel.h
     PersonListModel.cpp
+    SettingsDialog.h
+    SettingsDialog.cpp
     SplitViewModel.h
     SplitViewModel.cpp
     )

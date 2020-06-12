@@ -28,7 +28,7 @@ QWidget *BillLineDelegate::createEditor(QWidget *parent,
   } else if (index.column() == BillLineModel::Column::TAX_RATE) {
     auto *tax_entry = new QDoubleSpinBox(parent);
     tax_entry->setFrame(false);
-    tax_entry->setSuffix(_("Bill line edit tax rate suffix", "%"));
+    tax_entry->setSuffix(_("Tax rate suffix", "%"));
     tax_entry->setMinimum(0);
     tax_entry->setMaximum(100);
     tax_entry->setDecimals(3);

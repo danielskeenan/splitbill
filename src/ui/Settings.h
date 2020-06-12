@@ -23,6 +23,8 @@ class Settings {
   struct Setting {
     constexpr static char WindowPosition[] = "position";
     constexpr static char WindowSize[] = "size";
+    constexpr static char DefaultTaxRate[] = "default_tax_rate";
+    constexpr static char DefaultPeople[] = "default_people";
   };
 
   static QVariant Get(const QString &key, const QVariant &default_value = QVariant()) {
@@ -48,6 +50,22 @@ class Settings {
 
   static void SetWindowSize(const QSize &size) {
     Set(Setting::WindowSize, size);
+  }
+
+  static double GetDefaultTaxRate() {
+    return Get(Setting::DefaultTaxRate, 0.00).toDouble();
+  }
+
+  static void SetDefaultTaxRate(const double &tax_rate) {
+    Set(Setting::DefaultTaxRate, tax_rate);
+  }
+
+  static QStringList GetDefaultPeople() {
+    return Get(Setting::DefaultPeople, QStringList()).toStringList();
+  }
+
+  static void SetDefaultPeople(const QStringList &people) {
+    Set(Setting::DefaultPeople, people);
   }
 };
 
