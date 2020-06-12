@@ -49,7 +49,7 @@ QVariant BillLineModel::headerData(int section, Qt::Orientation orientation, int
       COL_HEADER_LABEL(Column::DESCRIPTION, "Description");
       COL_HEADER_LABEL(Column::AMOUNT, "Amount");
       COL_HEADER_LABEL(Column::TAX_RATE, "Tax");
-      COL_HEADER_LABEL(Column::IS_SPLIT, "Split");
+      COL_HEADER_LABEL(Column::IS_SPLIT, "Usage");
       default: return QVariant();
     }
   }
@@ -76,7 +76,7 @@ QVariant BillLineModel::data(const QModelIndex &index, int role) const {
       string_val << boost::locale::as::percent << line.tax_rate.convert_to<double>();
       return QString::fromStdString(string_val.str());
     } else if (index.column() == Column::IS_SPLIT) {
-      return line.split;
+      return line.split ? _("Bill line usage", "Yes") : _("Bill line usage", "No");
     }
   } else if (role == Qt::ItemDataRole::CheckStateRole) {
     BillLine line = bill_->GetLine(index.row());
