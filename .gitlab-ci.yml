@@ -68,31 +68,17 @@ stages:
 .macos-13:
   # The Mac OS jobs assume that several things are already installed on the build machine:
   # Python 3, pandoc, cmake, git, p7zip, and the XCode toolchain
+  # Libraries boost and qt are installed via macports
   tags:
     - darwin
     - darwin-13
   variables:
-    CONAN_USER_HOME: "$CI_PROJECT_DIR/.cache"
     QT_VERSION: 5.15.0
-    PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
   before_script:
     - export CMAKE_BUILD_PARALLEL_LEVEL=$(sysctl -n hw.logicalcpu)
     - export CTEST_PARALLEL_LEVEL=$(sysctl -n hw.logicalcpu)
-    # Get Qt
-    - pip install requests semantic_version lxml
-    - git clone https://github.com/engnr/qt-downloader.git
-    - python qt-downloader/qt-downloader --output=.qt macos desktop "${QT_VERSION}" "clang_64"
-    - export PATH="$(pwd)/${QT_VERSION}/clang_64/bin:${PATH}"
-    # Build deps
-    - pip install conan
-    - conan profile new --detect --force default
-    - conan install . --profile=default --install-folder=build
     # Create buildsystem
-    - cmake -DCMAKE_BUILD_TYPE=Release -DQt5_DIR="$(pwd)/.qt/${QT_VERSION}/clang_64/lib/cmake/Qt5" -DBUILD_TESTING=Off -S . -B build
-  cache:
-    key: "macos-13"
-    paths:
-      - ".cache"
+    - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=Off -S . -B build
 
 test-ubuntu-20-04:
   extends: .ubuntu-20-04
