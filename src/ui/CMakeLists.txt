@@ -54,7 +54,7 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
         windeployqt(splitbill bin)
     endif ()
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    file(COPY "${PROJECT_SOURCE_DIR}/resources/app-icon.icns" DESTINATON "${PROJECT_BINARY_DIR}/meta/splitbill.icns")
+    file(COPY "${PROJECT_SOURCE_DIR}/resources/app-icon.icns" DESTINATION "${PROJECT_BINARY_DIR}/meta/splitbill.icns")
         set_target_properties(splitbill PROPERTIES
             RESOURCE "${PROJECT_BINARY_DIR}/meta/splitbill.icns")
     if (BUILD_PACKAGE)
