@@ -1,4 +1,5 @@
-install(TARGETS splitbill RUNTIME BUNDLE)
+install(TARGETS splitbill RUNTIME)
+install(TARGETS splitbill BUNDLE DESTINATION /)
 
 set(CPACK_PACKAGE_VENDOR "${PROJECT_AUTHOR}")
 set(CPACK_PACKAGE_CONTACT "${PROJECT_AUTHOR} <dk@dankeenan.org>")
@@ -43,9 +44,6 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 
     # Run macdeployqt
     find_program(MACDEPLOYQT_PROG macdeployqt)
-    if (NOT MACDEPLOTQT_PROG)
-        message(FATAL_ERROR "Cannot find macdeployqt, needed for finalizing the application bundle.")
-    endif ()
     add_custom_command(TARGET splitbill POST_BUILD
         COMMENT "Running macdeployqt"
         COMMAND ${MACDEPLOYQT_PROG} ARGS $<TARGET_FILE:splitbill> -verbose=2)
