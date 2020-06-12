@@ -54,12 +54,13 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
         windeployqt(splitbill bin)
     endif ()
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    #    set_target_properties(splitbill PROPERTIES
-    #        RESOURCE ${PROJECT_SOURCE_DIR}/resources/app-icon.icns)
+    file(COPY "${PROJECT_SOURCE_DIR}/resources/app-icon.icns" DESTINATON "${PROJECT_BINARY_DIR}/meta/splitbill.icns")
+        set_target_properties(splitbill PROPERTIES
+            RESOURCE "${PROJECT_BINARY_DIR}/meta/splitbill.icns")
     if (BUILD_PACKAGE)
         find_program(MACDEPLOYQT_PROG macdeployqt)
         add_custom_command(TARGET splitbill POST_BUILD
             COMMENT "Running macdeployqt"
-            COMMAND ${MACDEPLOYQT_PROG} ARGS $<TARGET_FILE:splitbill> -verbose=2)
+            COMMAND ${MACDEPLOYQT_PROG} ARGS $<TARGET_BUNDLE_DIR:splitbill> -verbose=1)
     endif ()
 endif ()
