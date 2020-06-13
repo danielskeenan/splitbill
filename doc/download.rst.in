@@ -1,0 +1,33 @@
+Downloads
+=========
+
+.. Note: This file is automaticlly generated with CMake.
+   The download links and hashes are filled in during that process.
+
+Windows
+-------
+
+.. csv-table::
+   :header: "Download", "MD5", "Checksum"
+
+   `Installer <_static/splitbill-${CMAKE_PROJECT_VERSION}-win64.exe>`_,`MD5 Checksum <_static/splitbill-${CMAKE_PROJECT_VERSION}-win64.exe.md5>`_,${HASH_WIN64_INSTALLER}
+   `ZIP Archive <_static/splitbill-${CMAKE_PROJECT_VERSION}-win64.zip>`_,`MD5 Checksum <_static/splitbill-${CMAKE_PROJECT_VERSION}-win64.zip.md5>`_,${HASH_WIN64_ZIP}
+
+Mac OS
+------
+
+.. csv-table::
+   :header: "Download", "MD5", "Checksum"
+
+   `Disk Image <_static/splitbill-${CMAKE_PROJECT_VERSION}-Darwin.dmg>`_,`MD5 Checksum <_static/splitbill-${CMAKE_PROJECT_VERSION}-Darwin.dmg.md5>`_,${HASH_DARWIN_DMG}
+   `ZIP Archive <_static/splitbill-${CMAKE_PROJECT_VERSION}-Darwin.zip>`_,`MD5 Checksum <_static/splitbill-${CMAKE_PROJECT_VERSION}-Darwin.zip.md5>`_,${HASH_DARWIN_ZIP}
+
+Linux
+-----
+
+.. csv-table::
+   :header: "Download", "MD5", "Checksum"
+
+   `Ubuntu Debian Package <_static/splitbill-${CMAKE_PROJECT_VERSION}-Linux.deb>`_,`MD5 Checksum <_static/splitbill-${CMAKE_PROJECT_VERSION}-Linux.deb.md5>`_,${HASH_LINUX_DEB}
+   `Tarball (GZip compressed) <_static/splitbill-${CMAKE_PROJECT_VERSION}-Linux.tar.gz>`_,`MD5 Checksum <_static/splitbill-${CMAKE_PROJECT_VERSION}-Linux.tar.gz.md5>`_,${HASH_LINUX_TGZ}
+   `Tarball (BZip2 compressed) <_static/splitbill-${CMAKE_PROJECT_VERSION}-Linux.tar.bz2>`_,`MD5 Checksum <_static/splitbill-${CMAKE_PROJECT_VERSION}-Linux.tar.bz2.md5>`_,${HASH_LINUX_TBZ}
