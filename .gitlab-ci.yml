@@ -167,13 +167,14 @@ pages:
       artifacts: true
     - job: build-macos-13
       artifacts: true
-  image: sphinxdoc/sphinx
+  image: ubuntu:20.04
   variables:
     DEBIAN_FRONTEND: noninteractive
   script:
     - apt-get -y update
-    - apt-get -y install build-essential cmake git libboost-dev libboost-date-time-dev libboost-locale-dev pandoc qtbase5-dev
-    - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=Off -DBUILD_DOC=On -DDOC_OUTPUT_DIR=$(pwd)/public -S . -B build
+    - apt-get -y install build-essential cmake git python3 python3-pip
+    - pip3 install sphinx
+    - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_APP=Off -DBUILD_DOC=On -DDOC_OUTPUT_DIR=$(pwd)/public -S . -B build
     - cmake --build build --target doc
   artifacts:
     paths:
