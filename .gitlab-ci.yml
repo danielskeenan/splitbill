@@ -88,8 +88,10 @@ test-ubuntu-20-04:
   script:
     - cmake -DBUILD_TESTING=On build
     - cmake --build build --target splitbill_lib_test
-    - cd build
-    - ctest
+    - ./build/tests/lib/splitbill_lib_test --gtest_output="xml:report.xml"
+  artifacts:
+    reports:
+      junit: report.xml
 
 test-windows-1809:
   extends: .windows-1809
@@ -97,8 +99,10 @@ test-windows-1809:
   script:
     - cmake -DBUILD_TESTING=On build
     - cmake --build build --target splitbill_lib_test
-    - cd build
-    - ctest
+    - .\build\tests\lib\splitbill_lib_test --gtest_output="xml:report.xml"
+  artifacts:
+    reports:
+      junit: report.xml
 
 test-macos-13:
   extends: .macos-13
@@ -106,8 +110,10 @@ test-macos-13:
   script:
     - cmake -DBUILD_TESTING=On build
     - cmake --build build --target splitbill_lib_test
-    - cd build
-    - ctest
+    - ./build/tests/lib/splitbill_lib_test --gtest_output="xml:report.xml"
+  artifacts:
+    reports:
+      junit: report.xml
 
 build-ubuntu-20-04:
   extends: .ubuntu-20-04
