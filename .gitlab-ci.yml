@@ -99,7 +99,7 @@ test-windows-1809:
   script:
     - cmake -DBUILD_TESTING=On build
     - cmake --build build --target splitbill_lib_test
-    - .\build\tests\lib\splitbill_lib_test --gtest_output="xml:report.xml"
+    - .\build\tests\lib\splitbill_lib_test.exe --gtest_output="xml:report.xml"
   artifacts:
     reports:
       junit: report.xml
