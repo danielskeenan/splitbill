@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 project(splitbill
-    VERSION 0.0.1
+    VERSION 0.1.0
     DESCRIPTION "Split bills among several people fairly")
 set(PROJECT_DISPLAY_NAME "Split Bill")
 set(PROJECT_AUTHOR "Dan Keenan")
