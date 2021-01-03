@@ -13,6 +13,7 @@ env:
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
         os:
           - macos-latest
@@ -36,16 +37,18 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Create Build Environment
+        # Use a bash shell so we can use the same syntax for environment variable
+        # access regardless of the host operating system
+        shell: bash
         # Telling cmake to make the directory adapts the different syntax for each platform
         run: cmake -E make_directory ${BUILD_DIR}
       - name: Install conan
+        shell: bash
         run: |
           pipx install conan
           conan profile new --detect --force default
       - name: Get cache directories
         id: cache-dirs
-        # Use a bash shell so we can use the same syntax for environment variable
-        # access regardless of the host operating system
         shell: bash
         run: |
           echo "::set-output name=conan::$(conan config home)"
@@ -60,6 +63,7 @@ jobs:
         shell: bash
         run: conan install . --profile=default --install-folder=build
       - name: Install System Packages
+        shell: bash
         run: ${{matrix.system_packages_command}}
       - name: Install Qt
         # Don't need this on Linux, as Qt will come from the system package manager
