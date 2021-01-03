@@ -1,0 +1,118 @@
+name: CI
+
+on:
+  push: ~
+  pull_request: ~
+  workflow_dispatch: ~
+
+env:
+  BUILD_TYPE: Release
+  SOURCE_DIR: ${{github.workspace}}
+  BUILD_DIR: ${{github.workspace}}/build
+  CONAN_USER_HOME: ${{ github.workspace }}/.conan/
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - macos-latest
+          - windows-latest
+          - ubuntu-latest
+    runs-on: ${{matrix.os}}
+    steps:
+      #######################
+      # BUILD
+      #######################
+      - uses: actions/checkout@v2
+      - name: Create Build Environment
+        # Use a bash shell so we can use the same syntax for environment variable
+        # access regardless of the host operating system
+        shell: bash
+        # Telling cmake to make the directory adapts the different syntax for each platform
+        run: cmake -E make_directory ${BUILD_DIR}
+      - name: Install Conan
+        uses: turtlebrowser/get-conan@main
+      - name: Setup conan
+        shell: bash
+        run: conan profile new --detect --force default
+      #      - name: Cache dependencies
+      #        uses: actions/cache@v2
+      #        with:
+      #          path: |
+      #            ${{env.CONAN_USER_HOME}}
+      #          key: ${{ runner.os }}-deps-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/conanfile.txt') }}
+      #          restore-keys: ${{ runner.os }}-deps-${{ secrets.CACHE_VERSION }}-
+      - name: Install dependencies
+        shell: bash
+        run: conan install . --profile=default --install-folder=build --build=missing
+      - name: Install System Packages (macOS)
+        if: ${{runner.os == 'macOS'}}
+        run: brew install pandoc
+      - name: Install System Packages (Windows)
+        if: ${{runner.os == 'Windows'}}
+        run: |
+          choco install nsis.portable -y
+          choco install pandoc -y --ia=ALLUSERS=1
+          refreshenv
+      - name: Install System Packages (Linux)
+        if: ${{runner.os == 'Linux'}}
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install pandoc qtbase5-dev
+      - name: Install Qt
+        # Don't need this on Linux, as Qt will come from the system package manager
+        if: ${{runner.os != 'Linux'}}
+        uses: jurplel/install-qt-action@v2
+        with:
+          dir: ${{github.workspace}}/.qt
+          setup-python: false
+      - name: Configure CMake
+        shell: bash
+        run: cmake -S "${SOURCE_DIR}" -B "${BUILD_DIR}" -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
+      - name: Build
+        shell: bash
+        run: cmake --build "${BUILD_DIR}" --config ${BUILD_TYPE}
+
+      #######################
+      # TEST
+      #######################
+      - name: Test
+        working-directory: ${{env.BUILD_DIR}}
+        shell: bash
+        run: ctest -C ${BUILD_TYPE}
+
+      #######################
+      # PACKAGE
+      #######################
+      - name: Package (macOS)
+        shell: bash
+        if: ${{runner.os == 'macOS'}}
+        run: |
+          cmake -DBUILD_PACKAGE=On -DBUILD_TESTING=Off "${BUILD_DIR}"
+          cmake --build "${BUILD_DIR}"
+          cd "${BUILD_DIR}"
+          cpack -G "ZIP;DragNDrop" -B "${BUILD_DIR}/packages"
+      - name: Package (Windows)
+        if: ${{runner.os == 'Windows'}}
+        shell: bash
+        run: |
+          cmake -DBUILD_PACKAGE=On -DBUILD_TESTING=Off "${BUILD_DIR}"
+          cmake --build "${BUILD_DIR}"
+          cd "${BUILD_DIR}"
+          cpack -G "ZIP;NSIS" -B "${BUILD_DIR}/packages"
+      - name: Package (Linux)
+        if: ${{runner.os == 'Linux'}}
+        shell: bash
+        run: |
+          cmake -DBUILD_PACKAGE=On -DBUILD_TESTING=Off "${BUILD_DIR}"
+          cmake --build "${BUILD_DIR}"
+          cd "${BUILD_DIR}"
+          cpack -G "TGZ;TBZ2;DEB" -B "${BUILD_DIR}/packages"
+      - name: Upload packages
+        uses: actions/upload-artifact@v2
+        with:
+          name: packages
+          path: ${{env.BUILD_DIR}}/packages/splitbill-*.*
+          if-no-files-found: error
