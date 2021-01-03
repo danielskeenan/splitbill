@@ -35,12 +35,11 @@ jobs:
         shell: bash
         # Telling cmake to make the directory adapts the different syntax for each platform
         run: cmake -E make_directory ${BUILD_DIR}
-      - name: Install conan
+      - name: Install Conan
+        uses: turtlebrowser/get-conan@main
+      - name: Setup conan
         shell: bash
-        run: |
-          pipx install conan
-          pipx ensurepath
-          conan profile new --detect --force default
+        run: conan profile new --detect --force default
       - name: Get cache directories
         id: cache-dirs
         shell: bash
