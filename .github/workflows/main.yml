@@ -37,13 +37,13 @@ jobs:
       - name: Setup conan
         shell: bash
         run: conan profile new --detect --force default
-      - name: Cache dependencies
-        uses: actions/cache@v2
-        with:
-          path: |
-            ${{env.CONAN_USER_HOME}}
-          key: ${{ runner.os }}-deps-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/conanfile.txt') }}
-          restore-keys: ${{ runner.os }}-deps-${{ secrets.CACHE_VERSION }}-
+      #      - name: Cache dependencies
+      #        uses: actions/cache@v2
+      #        with:
+      #          path: |
+      #            ${{env.CONAN_USER_HOME}}
+      #          key: ${{ runner.os }}-deps-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/conanfile.txt') }}
+      #          restore-keys: ${{ runner.os }}-deps-${{ secrets.CACHE_VERSION }}-
       - name: Install dependencies
         shell: bash
         run: conan install . --profile=default --install-folder=build --build=missing
