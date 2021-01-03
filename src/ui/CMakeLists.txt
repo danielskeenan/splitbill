@@ -42,9 +42,7 @@ set_target_properties(splitbill PROPERTIES
     MACOSX_BUNDLE_LONG_VERSION_STRING ${CMAKE_PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${CMAKE_PROJECT_VERSION})
 
-target_link_libraries(splitbill splitbill_lib)
-target_link_libraries(splitbill Qt5::Widgets)
-target_link_libraries(splitbill Boost::locale)
+target_link_libraries(splitbill PUBLIC splitbill_lib Qt5::Widgets Boost::locale)
 target_include_directories(splitbill PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
 # Qt packaging

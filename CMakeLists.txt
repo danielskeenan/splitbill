@@ -11,10 +11,6 @@ set(CMAKE_MODULE_PATH "${PROJECT_BINARY_DIR}")
 
 set(BUILD_APP On CACHE BOOL "Build program")
 if (BUILD_APP)
-    if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
-        include(cmake/conan.cmake)
-    endif ()
-
     add_subdirectory(src)
     add_subdirectory(resources)
 
