@@ -7,7 +7,7 @@
 
 #include "SplitViewModel.h"
 #include <QtCore/QVector>
-#include "trans.h"
+#include <QLocale>
 
 namespace splitbill::ui {
 
@@ -36,25 +36,21 @@ QVariant SplitViewModel::data(const QModelIndex &index, int role) const {
 //      usage_str << boost::locale::as::currency << portion.GetUsageTotal();
 //      return QString::fromStdString(usage_str.str());
     } else if (index.column() == Column::TOTAL) {
-      std::stringstream total_str;
-      total_str << boost::locale::as::currency << portion.GetTotal();
-      return QString::fromStdString(total_str.str());
+      return QLocale().toCurrencyString(portion.GetTotal());
     }
   }
 
   return QVariant();
 }
 
-#define COL_HEADER_LABEL(col, label) case col: return _("Split view column header", label)
-
 QVariant SplitViewModel::headerData(int section, Qt::Orientation orientation, int role) const {
   if (role == Qt::ItemDataRole::DisplayRole) {
     if (orientation == Qt::Orientation::Horizontal) {
       switch (section) {
-        COL_HEADER_LABEL(Column::NAME, "Name");
+        case Column::NAME:return tr("Name");
 //        COL_HEADER_LABEL(Column::GENERAL, "General");
 //        COL_HEADER_LABEL(Column::USAGE, "Usage");
-        COL_HEADER_LABEL(Column::TOTAL, "Total");
+        case Column::TOTAL:return tr("Total");
       }
     }
   }

@@ -7,7 +7,6 @@
 
 #include <QtWidgets/QDoubleSpinBox>
 #include <QtWidgets/QCheckBox>
-#include "trans.h"
 #include "BillLineDelegate.h"
 #include "BillLineModel.h"
 
@@ -19,8 +18,7 @@ QWidget *BillLineDelegate::createEditor(QWidget *parent,
   if (index.column() == BillLineModel::Column::AMOUNT) {
     auto *amount_entry = new QDoubleSpinBox(parent);
     amount_entry->setFrame(false);
-    amount_entry->setPrefix(_("Bill line edit amount prefix", "$"));
-    amount_entry->setSuffix(_("Bill line edit amount suffix", ""));
+    amount_entry->setPrefix(QLocale().currencySymbol());
     amount_entry->setMinimum(0);
     amount_entry->setMaximum(999.99);
     amount_entry->setDecimals(2);
@@ -28,7 +26,7 @@ QWidget *BillLineDelegate::createEditor(QWidget *parent,
   } else if (index.column() == BillLineModel::Column::TAX_RATE) {
     auto *tax_entry = new QDoubleSpinBox(parent);
     tax_entry->setFrame(false);
-    tax_entry->setSuffix(_("Tax rate suffix", "%"));
+    tax_entry->setSuffix(QLocale().percent());
     tax_entry->setMinimum(0);
     tax_entry->setMaximum(100);
     tax_entry->setDecimals(3);
