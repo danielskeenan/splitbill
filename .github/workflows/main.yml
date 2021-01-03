@@ -76,6 +76,6 @@ jobs:
         shell: bash
         run: cmake --build "${BUILD_DIR}" --config ${BUILD_TYPE}
       - name: Test
-        working-directory: ${{runner.workspace}}/build
+        working-directory: ${{env.BUILD_DIR}}
         shell: bash
         run: ctest -C ${BUILD_TYPE}
