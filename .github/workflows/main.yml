@@ -1,0 +1,80 @@
+name: CMake
+
+on:
+  push: ~
+  pull_request: ~
+  workflow_dispatch: ~
+
+env:
+  BUILD_TYPE: Release
+  SOURCE_DIR: ${{github.workspace}}
+  BUILD_DIR: ${{github.workspace}}/build
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os:
+          - macos-latest
+          - windows-latest
+          - ubuntu-latest
+        include:
+          - os: macos-latest
+            cmake_generator: Unix Makefiles
+            system_packages_command: brew install pandoc
+          - os: windows-latest
+            cmake_generator: NMake Makefiles
+            system_packages_command: |
+              choco install nsis.portable -y
+              choco install pandoc -y --ia=ALLUSERS=1
+              refreshenv
+          - os: ubuntu-latest
+            cmake_generator: Unix Makefiles
+            system_packages_command: |
+              sudo apt-get -y install pandoc qtbase5-dev
+    runs-on: ${{matrix.os}}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Create Build Environment
+        # Telling cmake to make the directory adapts the different syntax for each platform
+        run: cmake -E make_directory ${BUILD_DIR}
+      - name: Install conan
+        run: |
+          pipx install conan
+          conan profile new --detect --force default
+      - name: Get cache directories
+        id: cache-dirs
+        # Use a bash shell so we can use the same syntax for environment variable
+        # access regardless of the host operating system
+        shell: bash
+        run: |
+          echo "::set-output name=conan::$(conan config home)"
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            ${{ steps.cache-dirs.outputs.conan }}
+          key: ${{ runner.os }}-deps-${{ hashFiles('**/conanfile.txt') }}
+          restore-keys: ${{ runner.os }}-deps-
+      - name: Install dependencies
+        shell: bash
+        run: conan install . --profile=default --install-folder=build
+      - name: Install System Packages
+        run: ${{matrix.system_packages_command}}
+      - name: Install Qt
+        # Don't need this on Linux, as Qt will come from the system package manager
+        if: ${{runner.os != 'Linux'}}
+        uses: jurplel/install-qt-action@v2
+        with:
+          dir: ${{github.workspace}}/.qt
+          setup-python: false
+      - name: Configure CMake
+        shell: bash
+        run: cmake -G "${{matrix.cmake_generator}}" -S "${SOURCE_DIR}" -B "${BUILD_DIR}" -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
+      - name: Build
+        shell: bash
+        run: cmake --build "${BUILD_DIR}" --config ${BUILD_TYPE}
+      - name: Test
+        working-directory: ${{runner.workspace}}/build
+        shell: bash
+        run: ctest -C ${BUILD_TYPE}
