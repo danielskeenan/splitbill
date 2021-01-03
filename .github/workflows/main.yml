@@ -19,13 +19,6 @@ jobs:
           - macos-latest
           - windows-latest
           - ubuntu-latest
-        include:
-          - os: macos-latest
-            cmake_generator: Unix Makefiles
-          - os: windows-latest
-            cmake_generator: NMake Makefiles
-          - os: ubuntu-latest
-            cmake_generator: Unix Makefiles
     runs-on: ${{matrix.os}}
     steps:
       - uses: actions/checkout@v2
@@ -78,7 +71,7 @@ jobs:
           setup-python: false
       - name: Configure CMake
         shell: bash
-        run: cmake -G "${{matrix.cmake_generator}}" -S "${SOURCE_DIR}" -B "${BUILD_DIR}" -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
+        run: cmake -S "${SOURCE_DIR}" -B "${BUILD_DIR}" -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
       - name: Build
         shell: bash
         run: cmake --build "${BUILD_DIR}" --config ${BUILD_TYPE}
