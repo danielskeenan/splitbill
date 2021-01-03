@@ -22,17 +22,10 @@ jobs:
         include:
           - os: macos-latest
             cmake_generator: Unix Makefiles
-            system_packages_command: brew install pandoc
           - os: windows-latest
             cmake_generator: NMake Makefiles
-            system_packages_command: |
-              choco install nsis.portable -y
-              choco install pandoc -y --ia=ALLUSERS=1
-              refreshenv
           - os: ubuntu-latest
             cmake_generator: Unix Makefiles
-            system_packages_command: |
-              sudo apt-get -y install pandoc qtbase5-dev
     runs-on: ${{matrix.os}}
     steps:
       - uses: actions/checkout@v2
@@ -63,9 +56,18 @@ jobs:
       - name: Install dependencies
         shell: bash
         run: conan install . --profile=default --install-folder=build --build=missing
-      - name: Install System Packages
-        shell: bash
-        run: ${{matrix.system_packages_command}}
+      - name: Install System Packages (macOS)
+        if: ${{runner.os == 'macOS'}}
+        run: brew install pandoc
+      - name: Install System Packages (Windows)
+        if: ${{runner.os == 'Windows'}}
+        run: |
+          choco install nsis.portable -y
+          choco install pandoc -y --ia=ALLUSERS=1
+          refreshenv
+      - name: Install System Packages (Linux)
+        if: ${{runner.os == 'Linux'}}
+        run: sudo apt-get -y install pandoc qtbase5-dev
       - name: Install Qt
         # Don't need this on Linux, as Qt will come from the system package manager
         if: ${{runner.os != 'Linux'}}
