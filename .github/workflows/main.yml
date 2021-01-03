@@ -127,7 +127,9 @@ jobs:
       - name: Create Build Environment
         run: mkdir "${BUILD_DIR}"
       - name: Install dependencies
-        run: pip3 install sphinx
+        run: |
+          pip3 install --user sphinx
+          echo "$(python3 -m site --user-base)/bin" >> $GITHUB_PATH
       - name: Download built packages
         uses: actions/download-artifact@v2
         with:
