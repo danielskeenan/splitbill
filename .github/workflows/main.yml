@@ -31,7 +31,7 @@ jobs:
         # access regardless of the host operating system
         shell: bash
         # Telling cmake to make the directory adapts the different syntax for each platform
-        run: cmake -E make_directory ${BUILD_DIR}
+        run: cmake -E make_directory "${BUILD_DIR}"
       - name: Install Conan
         uses: turtlebrowser/get-conan@main
       - name: Setup conan
@@ -116,3 +116,30 @@ jobs:
           name: packages
           path: ${{env.BUILD_DIR}}/packages/splitbill-*.*
           if-no-files-found: error
+  pages:
+    runs-on: ubuntu-latest
+    if: ${{github.ref == 'master'}}
+    needs:
+      - build
+    steps:
+      - uses: actions/checkout@v2
+      - name: Create Build Environment
+        run: mkdir "${BUILD_DIR}"
+      - name: Install dependencies
+        run: |
+          pip3 install --user sphinx
+          echo "$(python3 -m site --user-base)/bin" >> $GITHUB_PATH
+      - name: Download built packages
+        uses: actions/download-artifact@v2
+        with:
+          name: packages
+          path: ${{env.BUILD_DIR}}/packages
+      - name: Configure CMake
+        run: cmake -S "${SOURCE_DIR}" -B "${BUILD_DIR}" -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DBUILD_APP=Off -DBUILD_DOC=On -DDOC_OUTPUT_DIR="${{github.workspace}}/public"
+      - name: Build
+        run: cmake --build "${BUILD_DIR}" --config ${BUILD_TYPE} --target doc
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
