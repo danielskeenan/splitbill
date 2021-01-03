@@ -61,7 +61,7 @@ jobs:
           restore-keys: ${{ runner.os }}-deps-
       - name: Install dependencies
         shell: bash
-        run: conan install . --profile=default --install-folder=build
+        run: conan install . --profile=default --install-folder=build --build=missing
       - name: Install System Packages
         shell: bash
         run: ${{matrix.system_packages_command}}
