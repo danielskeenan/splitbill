@@ -10,7 +10,6 @@
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QGroupBox>
 #include "SettingsDialog.h"
-#include "trans.h"
 #include "Settings.h"
 
 namespace splitbill::ui {
@@ -20,10 +19,10 @@ SettingsDialog::SettingsDialog(QWidget *parent) : QDialog(parent) {
 }
 
 void SettingsDialog::InitUi() {
-  setWindowTitle(_("Preferences dialog title", "Preferences"));
+  setWindowTitle(tr("Preferences"));
   auto *layout = new QVBoxLayout;
   setLayout(layout);
-  auto *default_form = new QGroupBox(_("Default form", "Defaults"), this);
+  auto *default_form = new QGroupBox(tr("Defaults"), this);
   auto *form_layout = new QFormLayout;
   default_form->setLayout(form_layout);
   layout->addWidget(default_form);
@@ -35,8 +34,8 @@ void SettingsDialog::InitUi() {
   widgets_.defaultTaxRate->setMinimum(0);
   widgets_.defaultTaxRate->setMaximum(100);
   widgets_.defaultTaxRate->setDecimals(3);
-  widgets_.defaultTaxRate->setSuffix(_("Tax rate suffix", "%"));
-  form_layout->addRow(_("Default tax rate label", "Tax Rate"), widgets_.defaultTaxRate);
+  widgets_.defaultTaxRate->setSuffix(QLocale().percent());
+  form_layout->addRow(tr("Tax Rate"), widgets_.defaultTaxRate);
   // Default people
   auto *default_people_layout = new QVBoxLayout;
   widgets_.defaultPeople = new QListWidget(this);
@@ -45,16 +44,16 @@ void SettingsDialog::InitUi() {
   widgets_.defaultPeople->addItems(Settings::GetDefaultPeople());
   default_people_layout->addWidget(widgets_.defaultPeople);
   auto *default_people_buttons = new QDialogButtonBox(this);
-  auto *add_default_person = new QPushButton(_("Add default person", "Add"), this);
+  auto *add_default_person = new QPushButton(tr("Add"), this);
   add_default_person->setIcon(QIcon(":/add"));
   connect(add_default_person, &QPushButton::clicked, this, &SettingsDialog::s_AddPerson);
   default_people_buttons->addButton(add_default_person, QDialogButtonBox::ActionRole);
-  auto *remove_default_person = new QPushButton(_("Remove default person", "Remove"), this);
+  auto *remove_default_person = new QPushButton(tr("Remove"), this);
   remove_default_person->setIcon(QIcon(":/remove"));
   connect(remove_default_person, &QPushButton::clicked, this, &SettingsDialog::s_RemovePerson);
   default_people_buttons->addButton(remove_default_person, QDialogButtonBox::ActionRole);
   default_people_layout->addWidget(default_people_buttons);
-  form_layout->addRow(_("Default people label", "People"), default_people_layout);
+  form_layout->addRow(tr("People"), default_people_layout);
 
   // Dialog buttons
   auto *dialog_buttons = new QDialogButtonBox(
@@ -73,7 +72,7 @@ void SettingsDialog::s_AddPerson() {
   } else {
     index = widgets_.defaultPeople->count();
   }
-  auto *item = new QListWidgetItem(_("Default person name", "New Person"));
+  auto *item = new QListWidgetItem(tr("New Person"));
   widgets_.defaultPeople->insertItem(index, item);
   widgets_.defaultPeople->setCurrentRow(index);
 }

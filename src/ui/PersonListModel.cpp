@@ -8,7 +8,6 @@
 #include <QtCore/QSet>
 #include <QtCore/QDate>
 #include "PersonListModel.h"
-#include "trans.h"
 
 namespace splitbill::ui {
 
@@ -34,21 +33,23 @@ QVariant PersonListModel::data(const QModelIndex &index, int role) const {
   if (!index.isValid()) {
     return QVariant();
   }
+
+  const PersonPeriod &person = people_->at(index.row());
   if (role == Qt::ItemDataRole::DisplayRole) {
-    PersonPeriod person = people_->at(index.row());
     if (index.column() == Column::NAME) {
       return QString::fromStdString(person.GetName());
     } else if (index.column() == Column::START) {
-      std::stringstream start_date_str;
-      start_date_str << boost::locale::as::date << person.GetPeriod().begin();
-      return QString::fromStdString(start_date_str.str());
+      const QDate start_date(person.GetPeriod().begin().year(),
+                             person.GetPeriod().begin().month(),
+                             person.GetPeriod().begin().day());
+      return QLocale().toString(start_date, QLocale::ShortFormat);
     } else if (index.column() == Column::END) {
-      std::stringstream end_date_str;
-      end_date_str << boost::locale::as::date << person.GetPeriod().last();
-      return QString::fromStdString(end_date_str.str());
+      const QDate end_date(person.GetPeriod().end().year(),
+                           person.GetPeriod().end().month(),
+                           person.GetPeriod().end().day());
+      return QLocale().toString(end_date, QLocale::ShortFormat);
     }
   } else if (role == Qt::ItemDataRole::EditRole) {
-    PersonPeriod person = people_->at(index.row());
     if (index.column() == Column::NAME) {
       return QString::fromStdString(person.GetName());
     } else if (index.column() == Column::START) {
@@ -88,9 +89,9 @@ QVariant PersonListModel::headerData(int section, Qt::Orientation orientation, i
   if (role == Qt::ItemDataRole::DisplayRole) {
     if (orientation == Qt::Orientation::Horizontal) {
       switch (section) {
-        COL_HEADER_LABEL(Column::NAME, "Name");
-        COL_HEADER_LABEL(Column::START, "From");
-        COL_HEADER_LABEL(Column::END, "To");
+        case Column::NAME:return tr("Name");
+        case Column::START:return tr("From");
+        case Column::END:return tr("To");
         default: return QVariant();
       }
     }

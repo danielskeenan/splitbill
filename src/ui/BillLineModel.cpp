@@ -8,7 +8,6 @@
 #include <QtCore/QSet>
 #include "BillLineModel.h"
 #include "Settings.h"
-#include "trans.h"
 
 namespace splitbill::ui {
 
@@ -46,11 +45,11 @@ QVariant BillLineModel::headerData(int section, Qt::Orientation orientation, int
     }
 
     switch (section) {
-      COL_HEADER_LABEL(Column::NAME, "Name");
-      COL_HEADER_LABEL(Column::DESCRIPTION, "Description");
-      COL_HEADER_LABEL(Column::AMOUNT, "Amount");
-      COL_HEADER_LABEL(Column::TAX_RATE, "Tax");
-      COL_HEADER_LABEL(Column::IS_SPLIT, "Usage");
+      case Column::NAME:return tr("Name");
+      case Column::DESCRIPTION:return tr("Description");
+      case Column::AMOUNT:return tr("Amount");
+      case Column::TAX_RATE:return tr("Tax");
+      case Column::IS_SPLIT:return tr("Usage");
       default: return QVariant();
     }
   }
@@ -69,15 +68,12 @@ QVariant BillLineModel::data(const QModelIndex &index, int role) const {
     } else if (index.column() == Column::DESCRIPTION) {
       return QString::fromStdString(line.description);
     } else if (index.column() == Column::AMOUNT) {
-      std::stringstream string_val;
-      string_val << boost::locale::as::currency << line.amount.convert_to<double>();
-      return QString::fromStdString(string_val.str());
+      return QLocale().toCurrencyString(line.amount.convert_to<double>());
     } else if (index.column() == Column::TAX_RATE) {
-      std::stringstream string_val;
-      string_val << boost::locale::as::percent << line.tax_rate.convert_to<double>();
-      return QString::fromStdString(string_val.str());
+      return QLocale().toCurrencyString(line.tax_rate.convert_to<double>());
     } else if (index.column() == Column::IS_SPLIT) {
-      return line.split ? _("Bill line usage", "Yes") : _("Bill line usage", "No");
+      //: Bill line usage
+      return line.split ? tr("Yes") : tr("No");
     }
   } else if (role == Qt::ItemDataRole::CheckStateRole) {
     BillLine line = bill_->GetLine(index.row());

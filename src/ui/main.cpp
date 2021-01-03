@@ -7,23 +7,19 @@
 
 #include <QtWidgets/QApplication>
 #include <QIcon>
+#include <QTranslator>
 #include "config.h"
-#include "trans.h"
 #include "MainWindow.h"
 
 int main(int argc, char *argv[]) {
-  // Localization
-  boost::locale::generator gen;
-  gen.add_messages_domain(APP_NAME);
-  std::locale::global(gen(""));
-  std::cout.imbue(std::locale());
-
-  // Bootstrap
   QApplication app(argc, argv);
+  QTranslator translator;
+  translator.load(QLocale(), APP_NAME, "_", ":/i18n");
+  app.installTranslator(&translator);
   app.setOrganizationName(APP_AUTHOR);
   app.setOrganizationDomain(APP_DOMAIN);
   app.setApplicationName(APP_NAME);
-  app.setApplicationDisplayName(_("App name", APP_DISPLAY_NAME));
+  app.setApplicationDisplayName(translator.translate("entrypoint", "Split Bill"));
   app.setApplicationVersion(APP_VERSION);
   app.setWindowIcon(QIcon(":/app-icon"));
   splitbill::ui::MainWindow main_window;

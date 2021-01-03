@@ -1,22 +1,12 @@
 # Qt
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
-#set(CMAKE_AUTOUIC ON)
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
-set(autouic_options
-    -tr _
-    -include trans.h
-    )
-
-# Boost Locale
-find_package(Boost REQUIRED COMPONENTS locale)
 
 # Config
 configure_file(config.h.in config.h)
 
 add_executable(splitbill WIN32 MACOSX_BUNDLE
-    config.h
-    trans.h
     main.cpp
     Settings.h
     BillLineDelegate.h
@@ -42,7 +32,7 @@ set_target_properties(splitbill PROPERTIES
     MACOSX_BUNDLE_LONG_VERSION_STRING ${CMAKE_PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${CMAKE_PROJECT_VERSION})
 
-target_link_libraries(splitbill PUBLIC splitbill_lib Qt5::Widgets Boost::locale)
+target_link_libraries(splitbill PUBLIC splitbill_lib Qt5::Widgets)
 target_include_directories(splitbill PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
 # Qt packaging
