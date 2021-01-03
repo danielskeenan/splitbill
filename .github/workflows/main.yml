@@ -118,8 +118,7 @@ jobs:
           if-no-files-found: error
   pages:
     runs-on: ubuntu-latest
-    # TODO: When merging, enable this
-    # if: ${{github.ref == 'master'}}
+    if: ${{github.ref == 'master'}}
     needs:
       - build
     steps:
