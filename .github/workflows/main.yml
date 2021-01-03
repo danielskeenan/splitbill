@@ -46,6 +46,7 @@ jobs:
         shell: bash
         run: |
           pipx install conan
+          pipx ensurepath
           conan profile new --detect --force default
       - name: Get cache directories
         id: cache-dirs
