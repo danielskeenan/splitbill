@@ -1,0 +1,33 @@
+Downloads
+=========
+
+.. Note: This file is automaticlly generated with CMake.
+   The download links and hashes are filled in during that process.
+
+Windows
+-------
+
+.. csv-table::
+   :header: "Download", "MD5", "Checksum"
+
+   `Installer <_static/splitbill-0.1.0-win64.exe>`_,`MD5 Checksum <_static/splitbill-0.1.0-win64.exe.md5>`_,de31f259e574fbc95cec696fed6b0ca9
+   `ZIP Archive <_static/splitbill-0.1.0-win64.zip>`_,`MD5 Checksum <_static/splitbill-0.1.0-win64.zip.md5>`_,0be084c9043ab0ba8b1f38219bbf9cf6
+
+Mac OS
+------
+
+.. csv-table::
+   :header: "Download", "MD5", "Checksum"
+
+   `Disk Image <_static/splitbill-0.1.0-Darwin.dmg>`_,`MD5 Checksum <_static/splitbill-0.1.0-Darwin.dmg.md5>`_,e1f7cdfcf0d96b1d6f29eeb97234b270
+   `ZIP Archive <_static/splitbill-0.1.0-Darwin.zip>`_,`MD5 Checksum <_static/splitbill-0.1.0-Darwin.zip.md5>`_,8daf2c751f8eca58d77bbe395b609bc7
+
+Linux
+-----
+
+.. csv-table::
+   :header: "Download", "MD5", "Checksum"
+
+   `Ubuntu Debian Package <_static/splitbill-0.1.0-Linux.deb>`_,`MD5 Checksum <_static/splitbill-0.1.0-Linux.deb.md5>`_,242ea2dddf77cd63ea6095a71c981617
+   `Tarball (GZip compressed) <_static/splitbill-0.1.0-Linux.tar.gz>`_,`MD5 Checksum <_static/splitbill-0.1.0-Linux.tar.gz.md5>`_,fce4dab85ec27a29e3bcf0b224c73246
+   `Tarball (BZip2 compressed) <_static/splitbill-0.1.0-Linux.tar.bz2>`_,`MD5 Checksum <_static/splitbill-0.1.0-Linux.tar.bz2.md5>`_,097735ace3821ad0015454248b2f0d2a
