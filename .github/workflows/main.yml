@@ -90,7 +90,7 @@ jobs:
         shell: bash
         if: ${{runner.os == 'macOS'}}
         run: |
-          cmake -DBUILD_PACKAGE=On "${BUILD_DIR}"
+          cmake -DBUILD_PACKAGE=On -DBUILD_TESTING=Off "${BUILD_DIR}"
           cmake --build "${BUILD_DIR}"
           cd "${BUILD_DIR}"
           cpack -G "ZIP;DragNDrop" -B "${BUILD_DIR}/packages"
@@ -98,7 +98,7 @@ jobs:
         if: ${{runner.os == 'Windows'}}
         shell: bash
         run: |
-          cmake -DBUILD_PACKAGE=On "${BUILD_DIR}"
+          cmake -DBUILD_PACKAGE=On -DBUILD_TESTING=Off "${BUILD_DIR}"
           cmake --build "${BUILD_DIR}"
           cd "${BUILD_DIR}"
           cpack -G "ZIP;NSIS" -B "${BUILD_DIR}/packages"
@@ -106,7 +106,7 @@ jobs:
         if: ${{runner.os == 'Linux'}}
         shell: bash
         run: |
-          cmake -DBUILD_PACKAGE=On "${BUILD_DIR}"
+          cmake -DBUILD_PACKAGE=On -DBUILD_TESTING=Off "${BUILD_DIR}"
           cmake --build "${BUILD_DIR}"
           cd "${BUILD_DIR}"
           cpack -G "TGZ;TBZ2;DEB" -B "${BUILD_DIR}/packages"
