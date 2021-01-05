@@ -13,13 +13,10 @@
 #include <algorithm>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/multiprecision/cpp_dec_float.hpp>
-#include <boost/multiprecision/cpp_int.hpp>
-#include <boost/multiprecision/debug_adaptor.hpp>
 
 namespace splitbill {
-using namespace boost;
 
-typedef multiprecision::number<multiprecision::cpp_rational_backend> Money;
+typedef boost::multiprecision::cpp_dec_float_50 Money;
 
 /**
  * Bill Line
@@ -95,8 +92,9 @@ class PersonPeriod {
  public:
   explicit PersonPeriod() :
       name_(""),
-      period_(gregorian::date_period(gregorian::day_clock::local_day(),
-                                     gregorian::day_clock::local_day() + gregorian::date_duration(1))) {}
+      period_(boost::gregorian::date_period(boost::gregorian::day_clock::local_day(),
+                                            boost::gregorian::day_clock::local_day()
+                                                + boost::gregorian::date_duration(1))) {}
 
   /**
    * Create a new PersonPeriod for <name> present for <period>.
@@ -104,7 +102,7 @@ class PersonPeriod {
    * @param name
    * @param period
    */
-  explicit PersonPeriod(const std::string &name, const gregorian::date_period &period) :
+  explicit PersonPeriod(const std::string &name, const boost::gregorian::date_period &period) :
       name_(name), period_(period) {}
 
   /**
@@ -115,32 +113,34 @@ class PersonPeriod {
    */
   explicit PersonPeriod(const std::string &name, const std::string &start, const std::string &end) :
       PersonPeriod(name,
-                   gregorian::date_period(gregorian::from_string(start),
-                                          gregorian::from_string(end) + gregorian::date_duration(1))) {}
+                   boost::gregorian::date_period(boost::gregorian::from_string(start),
+                                                 boost::gregorian::from_string(end)
+                                                     + boost::gregorian::date_duration(1))) {}
 
   [[nodiscard]] const std::string GetName() const { return name_; }
 
   void SetName(const std::string &name) { name_ = name; }
 
-  [[nodiscard]] const gregorian::date_period GetPeriod() const { return period_; }
+  [[nodiscard]] const boost::gregorian::date_period GetPeriod() const { return period_; }
 
-  void SetPeriod(const gregorian::date_period &period) { period_ = period; }
+  void SetPeriod(const boost::gregorian::date_period &period) { period_ = period; }
 
-  [[nodiscard]] const std::string GetStart() const { return gregorian::to_iso_extended_string(period_.begin()); }
+  [[nodiscard]] const std::string GetStart() const { return boost::gregorian::to_iso_extended_string(period_.begin()); }
 
   void SetStart(const std::string &start) {
-    period_ = gregorian::date_period(gregorian::from_string(start), period_.end());
+    period_ = boost::gregorian::date_period(boost::gregorian::from_string(start), period_.end());
   }
 
-  [[nodiscard]] const std::string GetEnd() const { return gregorian::to_iso_extended_string(period_.last()); }
+  [[nodiscard]] const std::string GetEnd() const { return boost::gregorian::to_iso_extended_string(period_.last()); }
 
   void SetEnd(const std::string &end) {
-    period_ = gregorian::date_period(period_.begin(), gregorian::from_string(end) + gregorian::date_duration(1));
+    period_ = boost::gregorian::date_period(period_.begin(),
+                                            boost::gregorian::from_string(end) + boost::gregorian::date_duration(1));
   }
 
  private:
   std::string name_;
-  gregorian::date_period period_;
+  boost::gregorian::date_period period_;
 };
 
 /**
@@ -170,7 +170,7 @@ class Bill {
    * @param people
    * @return
    */
-  std::vector<splitbill::BillPortion> Split(const gregorian::date_period &period,
+  std::vector<splitbill::BillPortion> Split(const boost::gregorian::date_period &period,
                                             const std::vector<PersonPeriod> &person_periods,
                                             const std::vector<std::string> &people);
 
@@ -185,8 +185,10 @@ class Bill {
                                             const std::string &end,
                                             const std::vector<PersonPeriod> &person_periods,
                                             const std::vector<std::string> &people) {
-    return Split(gregorian::date_period(gregorian::from_string(start),
-                                        gregorian::from_string(end) + gregorian::date_duration(1)),
+    const boost::date_time::period<boost::gregorian::date, boost::gregorian::date_duration>
+        period(boost::gregorian::from_string(start),
+               boost::gregorian::from_string(end) + boost::gregorian::date_duration(1));
+    return Split(period,
                  person_periods,
                  people);
   }

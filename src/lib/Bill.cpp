@@ -50,9 +50,9 @@ SplitBill Bill::Total() {
   return split_bill;
 }
 
-#define FOR_DAY_IN_PERIOD(day_var, period) for (gregorian::date day_var = period.begin(); day_var <= period.last(); day_var += gregorian::date_duration(1))
+#define FOR_DAY_IN_PERIOD(day_var, period) for (boost::gregorian::date day_var = period.begin(); day_var <= period.last(); day_var += boost::gregorian::date_duration(1))
 
-std::vector<splitbill::BillPortion> Bill::Split(const gregorian::date_period &period,
+std::vector<splitbill::BillPortion> Bill::Split(const boost::gregorian::date_period &period,
                                                 const std::vector<PersonPeriod> &person_periods,
                                                 const std::vector<std::string> &people) {
   if (people.empty()) {
@@ -63,7 +63,7 @@ std::vector<splitbill::BillPortion> Bill::Split(const gregorian::date_period &pe
   const Money usage_part = totals.GetMoneyUsageTotal() / period.length().days();
 
   // First pass: Determine how many parts each day must be split into.
-  std::map<gregorian::date, unsigned int> day_parts;
+  std::map<boost::gregorian::date, unsigned int> day_parts;
   unsigned int everyone_usage_days = 0;
   FOR_DAY_IN_PERIOD(day, period) {
     unsigned int day_part_count = 0;
@@ -85,7 +85,7 @@ std::vector<splitbill::BillPortion> Bill::Split(const gregorian::date_period &pe
   // Second pass: divide the amount into chunks for each day, then divide those chunks into parts for
   // each user present on that day.  The end result of this is that presence on a given day costs a
   // certain amount.
-  std::map<gregorian::date, Money> day_usage_amounts;
+  std::map<boost::gregorian::date, Money> day_usage_amounts;
   FOR_DAY_IN_PERIOD(day, period) {
     day_usage_amounts.insert({day, usage_part / day_parts.at(day)});
   }
