@@ -86,36 +86,33 @@ jobs:
       #######################
       # PACKAGE
       #######################
-      - name: Package (macOS)
+      - name: Package prep
         shell: bash
-        if: ${{runner.os == 'macOS'}}
         run: |
           cmake -DBUILD_PACKAGE=On -DBUILD_TESTING=Off "${BUILD_DIR}"
-          cmake --build "${BUILD_DIR}"
-          cd "${BUILD_DIR}"
-          cpack -G "ZIP;DragNDrop" -B "${BUILD_DIR}/packages"
+          cmake --build "${BUILD_DIR}" --config ${BUILD_TYPE}
+      - name: Package (macOS)
+        if: ${{runner.os == 'macOS'}}
+        working-directory: ${{env.BUILD_DIR}}
+        shell: bash
+        run: cpack -G "ZIP;DragNDrop" -B "${BUILD_DIR}/packages"
       - name: Package (Windows)
         if: ${{runner.os == 'Windows'}}
+        working-directory: ${{env.BUILD_DIR}}
         shell: bash
-        run: |
-          cmake -DBUILD_PACKAGE=On -DBUILD_TESTING=Off "${BUILD_DIR}"
-          cmake --build "${BUILD_DIR}"
-          cd "${BUILD_DIR}"
-          cpack -G "ZIP;NSIS" -B "${BUILD_DIR}/packages"
+        run: cpack -G "ZIP;NSIS" -B "${BUILD_DIR}/packages"
       - name: Package (Linux)
         if: ${{runner.os == 'Linux'}}
+        working-directory: ${{env.BUILD_DIR}}
         shell: bash
-        run: |
-          cmake -DBUILD_PACKAGE=On -DBUILD_TESTING=Off "${BUILD_DIR}"
-          cmake --build "${BUILD_DIR}"
-          cd "${BUILD_DIR}"
-          cpack -G "TGZ;TBZ2;DEB" -B "${BUILD_DIR}/packages"
+        run: cpack -G "TGZ;TBZ2;DEB" -B "${BUILD_DIR}/packages"
       - name: Upload packages
         uses: actions/upload-artifact@v2
         with:
           name: packages
           path: ${{env.BUILD_DIR}}/packages/splitbill-*.*
           if-no-files-found: error
+
   pages:
     runs-on: ubuntu-latest
     if: ${{github.ref == 'refs/heads/master'}}
