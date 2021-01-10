@@ -15,8 +15,12 @@
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QMenu>
+#include <QCloseEvent>
+#include <QApplication>
+#include <QMessageBox>
 #include "Settings.h"
 #include "SettingsDialog.h"
+#include "AboutDialog.h"
 
 namespace splitbill::ui {
 
@@ -27,8 +31,9 @@ MainWindow::MainWindow(QWidget *parent) :
 }
 
 void MainWindow::InitUi() {
-  move(Settings::GetWindowPosition());
-  resize(Settings::GetWindowSize());
+  if (!restoreGeometry(Settings::GetMainWindowGeometry())) {
+    resize(600, 600);
+  }
 
   // Setup the layout
   auto *central_widget = new QWidget(this);
@@ -58,8 +63,8 @@ void MainWindow::InitUi() {
   //: Bill line total label
   line_info_layout->addWidget(new QLabel(tr("Line Total:")));
   widgets_.billLineTotalLabel = new QLabel;
-  s_UpdateLineTotal();
-  connect(bill_line_model_, &BillLineModel::dataChanged, this, &MainWindow::s_UpdateLineTotal);
+  SUpdateLineTotal();
+  connect(bill_line_model_, &BillLineModel::dataChanged, this, &MainWindow::SUpdateLineTotal);
   line_info_layout->addWidget(widgets_.billLineTotalLabel);
 
   // Add/Remove Buttons
@@ -67,13 +72,13 @@ void MainWindow::InitUi() {
   line_info_layout->addWidget(action_buttons);
   //: Bill line table
   auto *add_button = new QPushButton(tr("Add Line"), this);
-  add_button->setIcon(QIcon(":/add"));
-  connect(add_button, &QPushButton::clicked, this, &MainWindow::s_AddBillLine);
+  add_button->setIcon(QIcon::fromTheme("list-add"));
+  connect(add_button, &QPushButton::clicked, this, &MainWindow::SAddBillLine);
   action_buttons->addButton(add_button, QDialogButtonBox::ButtonRole::ActionRole);
   //: Bill line table
   auto *remove_button = new QPushButton(tr("Remove Line"), this);
-  remove_button->setIcon(QIcon(":/remove"));
-  connect(remove_button, &QPushButton::clicked, this, &MainWindow::s_RemoveBillLine);
+  remove_button->setIcon(QIcon::fromTheme("list-remove"));
+  connect(remove_button, &QPushButton::clicked, this, &MainWindow::SRemoveBillLine);
   action_buttons->addButton(remove_button, QDialogButtonBox::ButtonRole::ActionRole);
 
   // Bill overview
@@ -91,10 +96,10 @@ void MainWindow::InitUi() {
   widgets_.billIsValidLabel->setWordWrap(true);
   bill_valid_layout->addWidget(widgets_.billIsValidLabel);
   bill_valid_layout->addStretch();
-  s_UpdateBillValidation();
-  connect(bill_line_model_, &BillLineModel::dataChanged, this, &MainWindow::s_UpdateBillValidation);
+  SUpdateBillValidation();
+  connect(bill_line_model_, &BillLineModel::dataChanged, this, &MainWindow::SUpdateBillValidation);
   connect(widgets_.billTotalEntry,
-          QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::s_UpdateBillTotal);
+          QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::SUpdateBillTotal);
 
   // People list
   rightLayout->addWidget(InitPeopleTable());
@@ -106,8 +111,18 @@ void MainWindow::InitUi() {
 void MainWindow::InitMenu() {
   // Edit menu
   QMenu *edit_menu = menuBar()->addMenu(tr("&Edit"));
+  // Preferences
   QAction *edit_preferences = edit_menu->addAction(tr("&Preferences"));
-  connect(edit_preferences, &QAction::triggered, this, &MainWindow::s_Preferences);
+  connect(edit_preferences, &QAction::triggered, this, &MainWindow::SPreferences);
+
+  // Help menu
+  QMenu *help_menu = menuBar()->addMenu(tr("&Help"));
+  // About
+  QAction *help_about = help_menu->addAction(tr("&About"));
+  connect(help_about, &QAction::triggered, this, &MainWindow::SAbout);
+  // About Qt
+  QAction *help_about_qt = help_menu->addAction(tr("About &Qt"));
+  connect(help_about_qt, &QAction::triggered, [this]() { QMessageBox::aboutQt(this); });
 }
 
 QWidget *MainWindow::InitBillOverview() {
@@ -126,15 +141,15 @@ QWidget *MainWindow::InitBillOverview() {
   // Start date
   widgets_.billDateStart = new QDateEdit(QDate::currentDate(), this);
   widgets_.billDateStart->setCalendarPopup(true);
-  connect(widgets_.billDateStart, &QDateEdit::dateChanged, this, &MainWindow::s_UpdateBillValidation);
-  connect(widgets_.billDateStart, &QDateEdit::dateChanged, this, &MainWindow::s_UpdateSplit);
+  connect(widgets_.billDateStart, &QDateEdit::dateChanged, this, &MainWindow::SUpdateBillValidation);
+  connect(widgets_.billDateStart, &QDateEdit::dateChanged, this, &MainWindow::SUpdateSplit);
   layout->addRow(tr("Start"), widgets_.billDateStart);
 
   // End date
   widgets_.billDateEnd = new QDateEdit(QDate::currentDate(), this);
   widgets_.billDateEnd->setCalendarPopup(true);
-  connect(widgets_.billDateEnd, &QDateEdit::dateChanged, this, &MainWindow::s_UpdateBillValidation);
-  connect(widgets_.billDateEnd, &QDateEdit::dateChanged, this, &MainWindow::s_UpdateSplit);
+  connect(widgets_.billDateEnd, &QDateEdit::dateChanged, this, &MainWindow::SUpdateBillValidation);
+  connect(widgets_.billDateEnd, &QDateEdit::dateChanged, this, &MainWindow::SUpdateSplit);
   layout->addRow(tr("End"), widgets_.billDateEnd);
 
   return bill_overview;
@@ -149,9 +164,9 @@ void MainWindow::InitBillLineTable() {
   widgets_.lineView->setModel(bill_line_model_);
   auto *bill_line_delegate = new BillLineDelegate(this);
   widgets_.lineView->setItemDelegate(bill_line_delegate);
-  connect(bill_line_model_, &BillLineModel::rowsInserted, this, &MainWindow::s_UpdateSplit);
-  connect(bill_line_model_, &BillLineModel::rowsRemoved, this, &MainWindow::s_UpdateSplit);
-  connect(bill_line_model_, &BillLineModel::dataChanged, this, &MainWindow::s_UpdateSplit);
+  connect(bill_line_model_, &BillLineModel::rowsInserted, this, &MainWindow::SUpdateSplit);
+  connect(bill_line_model_, &BillLineModel::rowsRemoved, this, &MainWindow::SUpdateSplit);
+  connect(bill_line_model_, &BillLineModel::dataChanged, this, &MainWindow::SUpdateSplit);
 }
 
 QWidget *MainWindow::InitPeopleTable() {
@@ -170,20 +185,20 @@ QWidget *MainWindow::InitPeopleTable() {
   person_list_model_ = new PersonListModel(people_, this);
   widgets_.peopleView->setModel(person_list_model_);
   people_layout->addWidget(widgets_.peopleView);
-  connect(person_list_model_, &PersonListModel::rowsInserted, this, &MainWindow::s_UpdateSplit);
-  connect(person_list_model_, &PersonListModel::rowsRemoved, this, &MainWindow::s_UpdateSplit);
-  connect(person_list_model_, &PersonListModel::dataChanged, this, &MainWindow::s_UpdateSplit);
+  connect(person_list_model_, &PersonListModel::rowsInserted, this, &MainWindow::SUpdateSplit);
+  connect(person_list_model_, &PersonListModel::rowsRemoved, this, &MainWindow::SUpdateSplit);
+  connect(person_list_model_, &PersonListModel::dataChanged, this, &MainWindow::SUpdateSplit);
 
   // Add/Remove Buttons
   auto *action_buttons = new QDialogButtonBox(this);
   people_layout->addWidget(action_buttons);
   auto *add_button = new QPushButton(tr("Add Person"), this);
-  add_button->setIcon(QIcon(":/add"));
-  connect(add_button, &QPushButton::clicked, this, &MainWindow::s_AddPerson);
+  add_button->setIcon(QIcon::fromTheme("list-add"));
+  connect(add_button, &QPushButton::clicked, this, &MainWindow::SAddPerson);
   action_buttons->addButton(add_button, QDialogButtonBox::ButtonRole::ActionRole);
   auto *remove_button = new QPushButton(tr("Remove Person"), this);
-  remove_button->setIcon(QIcon(":/remove"));
-  connect(remove_button, &QPushButton::clicked, this, &MainWindow::s_RemovePerson);
+  remove_button->setIcon(QIcon::fromTheme("list-remove"));
+  connect(remove_button, &QPushButton::clicked, this, &MainWindow::SRemovePerson);
   action_buttons->addButton(remove_button, QDialogButtonBox::ButtonRole::ActionRole);
 
   return people_list;
@@ -199,33 +214,37 @@ QWidget *MainWindow::InitSplitTable() {
   split_view_model_ = new SplitViewModel(bill_, this);
   widgets_.splitView->setModel(split_view_model_);
   layout->addWidget(widgets_.splitView);
-  s_UpdateSplit();
+  SUpdateSplit();
 
   return split_view;
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {
-  Settings::SetWindowPosition(pos());
-  Settings::SetWindowSize(size());
-  QWidget::closeEvent(event);
+  Settings::SetMainWindowGeometry(saveGeometry());
+  event->accept();
 }
 
-void MainWindow::s_Preferences() {
-  auto settings_dialog = new SettingsDialog(this);
-  settings_dialog->show();
+void MainWindow::SPreferences() {
+  auto *settings_dialog = new SettingsDialog(this);
+  settings_dialog->exec();
 }
 
-void MainWindow::s_AddBillLine() {
+void MainWindow::SAbout() {
+  auto *about_dialog = new AboutDialog(this);
+  about_dialog->exec();
+}
+
+void MainWindow::SAddBillLine() {
   QItemSelectionModel *selection = widgets_.lineView->selectionModel();
   QModelIndex selected = selection->currentIndex();
   bill_line_model_->AddLine(selected);
 }
 
-void MainWindow::s_RemoveBillLine() {
+void MainWindow::SRemoveBillLine() {
   bill_line_model_->RemoveLines(widgets_.lineView->selectionModel()->selectedIndexes());
 }
 
-void MainWindow::s_AddPerson() {
+void MainWindow::SAddPerson() {
   QItemSelectionModel *selection = widgets_.peopleView->selectionModel();
   QModelIndex selected = selection->currentIndex();
   PersonPeriod person_period(tr("New Person").toStdString(),
@@ -234,26 +253,26 @@ void MainWindow::s_AddPerson() {
   person_list_model_->AddLine(person_period, selected);
 }
 
-void MainWindow::s_RemovePerson() {
+void MainWindow::SRemovePerson() {
   person_list_model_->RemoveLines(widgets_.peopleView->selectionModel()->selectedIndexes());
 }
 
-void MainWindow::s_UpdateLineTotal() {
+void MainWindow::SUpdateLineTotal() {
   const SplitBill totals = bill_->Total();
   widgets_.billLineTotalLabel->setText(QLocale().toCurrencyString(totals.GetTotal()));
 }
 
-void MainWindow::s_UpdateBillTotal(double val) {
+void MainWindow::SUpdateBillTotal(double val) {
   bill_->SetTotalAmount(val);
-  s_UpdateBillValidation();
-  s_UpdateSplit();
+  SUpdateBillValidation();
+  SUpdateSplit();
 }
 
-void MainWindow::s_UpdateBillValidation() {
+void MainWindow::SUpdateBillValidation() {
   static const QSize icon_size = QSize(16, 16);
   ValidationError error;
   if (!bill_->IsValid(error)) {
-    if (error == ValidationError::LINE_SUM_NOT_TOTAL) {
+    if (error == ValidationError::kLineSumNotTotal) {
       widgets_.billIsValidLabel->setText(tr("The sum of the lines does not equal the total."));
     } else {
       widgets_.billIsValidLabel->setText(tr("The bill is not valid for an unknown reason."));
@@ -269,7 +288,7 @@ void MainWindow::s_UpdateBillValidation() {
   }
 }
 
-void MainWindow::s_UpdateSplit() {
+void MainWindow::SUpdateSplit() {
   ValidationError error;
   if (bill_->IsValid(error) && widgets_.billDateStart->date() <= widgets_.billDateEnd->date()) {
     split_view_model_->Update(widgets_.billDateStart->date(), widgets_.billDateEnd->date(), *people_);

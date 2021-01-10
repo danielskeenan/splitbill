@@ -9,7 +9,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include "../../src/lib/Bill.h"
+#include <lib/Bill.h>
 
 namespace splitbill_test {
 
@@ -91,6 +91,31 @@ TEST_F(BillTest, LinesRemoved) {
 }
 
 /**
+ * Lines are updated properly
+ */
+TEST_F(BillTest, LinesUpdated) {
+  splitbill::Bill bill;
+
+  // Add lines
+  splitbill::BillLine line_1{"Test Line 1"};
+  line_1.amount = 51.00;
+  bill.AddLine(line_1);
+  splitbill::BillLine line_2{"Test Line 2"};
+  line_2.amount = 52.00;
+  bill.AddLine(line_2);
+  splitbill::BillLine line_3{"Test Line 3"};
+  line_3.amount = 53.00;
+  bill.AddLine(line_3);
+
+  ASSERT_EQ(bill.GetLine(1), line_2) << "Line not inserted correctly";
+  line_2.amount = 42.00;
+  bill.UpdateLine(1, line_2);
+  EXPECT_EQ(bill.GetLine(0).amount, 51.00) << "Wrong line updated";
+  EXPECT_EQ(bill.GetLine(1).amount, 42.00) << "Line not updated";
+  EXPECT_EQ(bill.GetLine(2).amount, 53.00) << "Wrong line updated";
+}
+
+/**
  * Totals calculated properly
  */
 TEST_F(BillTest, Total) {
@@ -161,12 +186,12 @@ TEST_F(BillTest, IsValid) {
   // Lines add up
   bill_.SetTotalAmount(148.84);
   EXPECT_TRUE(bill_.IsValid(error));
-  EXPECT_EQ(error, splitbill::ValidationError::VALID);
+  EXPECT_EQ(error, splitbill::ValidationError::kValid);
 
   // Lines don't add up
   bill_.SetTotalAmount(150);
   EXPECT_FALSE(bill_.IsValid(error));
-  EXPECT_EQ(error, splitbill::ValidationError::LINE_SUM_NOT_TOTAL);
+  EXPECT_EQ(error, splitbill::ValidationError::kLineSumNotTotal);
 }
 
 }

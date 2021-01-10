@@ -14,7 +14,9 @@ namespace splitbill::ui {
 QWidget *PersonListDelegate::createEditor(QWidget *parent,
                                           const QStyleOptionViewItem &option,
                                           const QModelIndex &index) const {
-  if (index.column() == PersonListModel::Column::START || index.column() == PersonListModel::Column::END) {
+  const auto column = static_cast<PersonListModel::Column>(index.column());
+
+  if (column == PersonListModel::Column::kStart || column == PersonListModel::Column::kEnd) {
     auto date_entry = new QDateEdit(QDate::currentDate(), parent);
     date_entry->setFrame(false);
     date_entry->setCalendarPopup(true);
@@ -30,7 +32,9 @@ void PersonListDelegate::setEditorData(QWidget *editor, const QModelIndex &index
     return;
   }
 
-  if (index.column() == PersonListModel::Column::START || index.column() == PersonListModel::Column::END) {
+  const auto column = static_cast<PersonListModel::Column>(index.column());
+
+  if (column == PersonListModel::Column::kStart || column == PersonListModel::Column::kEnd) {
     auto *date_entry = dynamic_cast<QDateEdit *>(editor);
     date_entry->setDate(value.toDate());
   } else {
@@ -39,7 +43,9 @@ void PersonListDelegate::setEditorData(QWidget *editor, const QModelIndex &index
 }
 
 void PersonListDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const {
-  if (index.column() == PersonListModel::Column::START || index.column() == PersonListModel::Column::END) {
+  const auto column = static_cast<PersonListModel::Column>(index.column());
+
+  if (column == PersonListModel::Column::kStart || column == PersonListModel::Column::kEnd) {
     auto *date_entry = dynamic_cast<QDateEdit *>(editor);
     model->setData(index, date_entry->date());
   } else {

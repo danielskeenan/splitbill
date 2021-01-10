@@ -11,54 +11,46 @@
 
 namespace splitbill::ui {
 
+const std::unordered_map<SplitViewModel::Column, QString> SplitViewModel::kColumnNames{
+    {Column::kName, tr("Name")},
+    {Column::kTotal, tr("Total")},
+};
+
 int SplitViewModel::rowCount(const QModelIndex &parent) const {
   return bill_portions_.size();
 }
 
 int SplitViewModel::columnCount(const QModelIndex &parent) const {
-  return COLUMN_COUNT;
+  return kColumnCount;
 }
 
 QVariant SplitViewModel::data(const QModelIndex &index, int role) const {
-  if (!index.isValid()) {
-    return QVariant();
-  }
+  const auto column = static_cast<Column>(index.column());
+  const BillPortion &portion = bill_portions_.at(index.row());
+
   if (role == Qt::ItemDataRole::DisplayRole) {
-    BillPortion portion = bill_portions_.at(index.row());
-    if (index.column() == Column::NAME) {
+    if (column == Column::kName) {
       return QString::fromStdString(portion.GetName());
-//    } else if (index.column() == Column::GENERAL) {
-//      std::stringstream general_str;
-//      general_str << boost::locale::as::currency << portion.GetGeneralTotal();
-//      return QString::fromStdString(general_str.str());
-//    } else if (index.column() == Column::USAGE) {
-//      std::stringstream usage_str;
-//      usage_str << boost::locale::as::currency << portion.GetUsageTotal();
-//      return QString::fromStdString(usage_str.str());
-    } else if (index.column() == Column::TOTAL) {
+    } else if (column == Column::kTotal) {
       return QLocale().toCurrencyString(portion.GetTotal());
     }
   }
 
-  return QVariant();
+  return {};
 }
 
 QVariant SplitViewModel::headerData(int section, Qt::Orientation orientation, int role) const {
+  const auto column = static_cast<Column>(section);
   if (role == Qt::ItemDataRole::DisplayRole) {
     if (orientation == Qt::Orientation::Horizontal) {
-      switch (section) {
-        case Column::NAME:return tr("Name");
-//        COL_HEADER_LABEL(Column::GENERAL, "General");
-//        COL_HEADER_LABEL(Column::USAGE, "Usage");
-        case Column::TOTAL:return tr("Total");
-      }
+      return kColumnNames.at(column);
     }
   }
 
-  return QVariant();
+  return {};
 }
 
-void SplitViewModel::Update(const QDate &start, const QDate &end, QVector<PersonPeriod> people_periods) {
+void SplitViewModel::Update(const QDate &start, const QDate &end, const QVector<PersonPeriod> &people_periods) {
   if (people_periods.empty()) {
     return;
   }

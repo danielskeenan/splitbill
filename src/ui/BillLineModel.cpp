@@ -6,13 +6,22 @@
  */
 
 #include <QtCore/QSet>
+#include <utility>
 #include "BillLineModel.h"
 #include "Settings.h"
 
 namespace splitbill::ui {
 
+const std::unordered_map<BillLineModel::Column, QString> BillLineModel::kColumnNames{
+    {Column::kName, tr("Name")},
+    {Column::kDescription, tr("Description")},
+    {Column::kAmount, tr("Amount")},
+    {Column::kTaxRate, tr("Tax")},
+    {Column::kIsSplit, tr("Usage")},
+};
+
 BillLineModel::BillLineModel(QSharedPointer<Bill> bill, QObject *parent) :
-    QAbstractTableModel(parent), bill_(bill) {
+    QAbstractTableModel(parent), bill_(std::move(bill)) {
 }
 
 int BillLineModel::rowCount(const QModelIndex &parent) const {
@@ -20,14 +29,14 @@ int BillLineModel::rowCount(const QModelIndex &parent) const {
 }
 
 int BillLineModel::columnCount(const QModelIndex &parent) const {
-  return COLUMN_COUNT;
+  return kColumnCount;
 }
 
 Qt::ItemFlags BillLineModel::flags(const QModelIndex &index) const {
+  const auto column = static_cast<Column>(index.column());
   Qt::ItemFlags flags = Qt::ItemFlag::ItemIsEnabled | Qt::ItemFlag::ItemNeverHasChildren
       | Qt::ItemFlag::ItemIsSelectable;
-  if (index.column() == Column::IS_SPLIT) {
-    // Checkboxes are technically not editable, but are checkable.
+  if (column == Column::kIsSplit) {
     flags |= Qt::ItemFlag::ItemIsUserCheckable;
   } else {
     flags |= Qt::ItemFlag::ItemIsEditable;
@@ -35,105 +44,90 @@ Qt::ItemFlags BillLineModel::flags(const QModelIndex &index) const {
   return flags;
 }
 
-#define COL_HEADER_LABEL(col, label) case col: return _("Bill line table column header", label)
-
 QVariant BillLineModel::headerData(int section, Qt::Orientation orientation, int role) const {
+  const auto column = static_cast<Column>(section);
   if (role == Qt::ItemDataRole::DisplayRole) {
     if (orientation == Qt::Orientation::Vertical) {
       // Row number
       return section + 1;
     }
-
-    switch (section) {
-      case Column::NAME:return tr("Name");
-      case Column::DESCRIPTION:return tr("Description");
-      case Column::AMOUNT:return tr("Amount");
-      case Column::TAX_RATE:return tr("Tax");
-      case Column::IS_SPLIT:return tr("Usage");
-      default: return QVariant();
-    }
+    return kColumnNames.at(column);
   }
 
-  return QVariant();
+  return {};
 }
 
 QVariant BillLineModel::data(const QModelIndex &index, int role) const {
-  if (!index.isValid()) {
-    return QVariant();
-  }
+  const auto column = static_cast<Column>(index.column());
+  const BillLine &line = bill_->GetLine(index.row());
+
   if (role == Qt::ItemDataRole::DisplayRole) {
-    BillLine line = bill_->GetLine(index.row());
-    if (index.column() == Column::NAME) {
+    if (column == Column::kName) {
       return QString::fromStdString(line.name);
-    } else if (index.column() == Column::DESCRIPTION) {
+    } else if (column == Column::kDescription) {
       return QString::fromStdString(line.description);
-    } else if (index.column() == Column::AMOUNT) {
+    } else if (column == Column::kAmount) {
       return QLocale().toCurrencyString(line.amount.convert_to<double>());
-    } else if (index.column() == Column::TAX_RATE) {
+    } else if (column == Column::kTaxRate) {
       return QLocale().toString(line.tax_rate.convert_to<double>() * 100, 'f', 3) + QLocale().percent();
-    } else if (index.column() == Column::IS_SPLIT) {
+    } else if (column == Column::kIsSplit) {
       //: Bill line usage
       return line.split ? tr("Yes") : tr("No");
     }
   } else if (role == Qt::ItemDataRole::CheckStateRole) {
-    BillLine line = bill_->GetLine(index.row());
-    if (index.column() == Column::IS_SPLIT) {
+    if (column == Column::kIsSplit) {
       return line.split ? Qt::CheckState::Checked : Qt::CheckState::Unchecked;
     }
   } else if (role == Qt::ItemDataRole::EditRole) {
-    BillLine line = bill_->GetLine(index.row());
-    if (index.column() == Column::NAME) {
+    if (column == Column::kName) {
       return QString::fromStdString(line.name);
-    } else if (index.column() == Column::DESCRIPTION) {
+    } else if (column == Column::kDescription) {
       return QString::fromStdString(line.description);
-    } else if (index.column() == Column::AMOUNT) {
+    } else if (column == Column::kAmount) {
       return line.amount.convert_to<double>();
-    } else if (index.column() == Column::TAX_RATE) {
+    } else if (column == Column::kTaxRate) {
       return line.tax_rate.convert_to<double>();
-    } else if (index.column() == Column::IS_SPLIT) {
+    } else if (column == Column::kIsSplit) {
       return line.split;
     }
   }
 
-  return QVariant();
+  return {};
 }
 
 bool BillLineModel::setData(const QModelIndex &index, const QVariant &value, int role) {
-  if (!index.isValid()) {
-    return false;
-  }
+  const auto column = static_cast<Column>(index.column());
+  BillLine line = bill_->GetLine(index.row());
+  bool success = false;
+
   if (role == Qt::ItemDataRole::EditRole) {
-    BillLine line = bill_->GetLine(index.row());
-    switch (index.column()) {
-      case Column::NAME:line.name = value.toString().toStdString();
-        break;
-      case Column::DESCRIPTION: line.description = value.toString().toStdString();
-        break;
-      case Column::AMOUNT: line.amount = value.toDouble();
-        break;
-      case Column::TAX_RATE: line.tax_rate = value.toDouble();
-        break;
-      case Column::IS_SPLIT: line.split = value.toBool();
-        break;
-      default:return false;
+    if (column == Column::kName) {
+      line.name = value.toString().toStdString();
+      success = true;
+    } else if (column == Column::kDescription) {
+      line.description = value.toString().toStdString();
+      success = true;
+    } else if (column == Column::kAmount) {
+      line.amount = value.toDouble(&success);
+    } else if (column == Column::kTaxRate) {
+      line.tax_rate = value.toDouble(&success);
+    } else if (column == Column::kIsSplit) {
+      line.split = value.toBool();
+      success = true;
     }
-    bill_->UpdateLine(index.row(), line);
-    emit(dataChanged(index, index));
-    return true;
   } else if (role == Qt::ItemDataRole::CheckStateRole) {
-    BillLine line = bill_->GetLine(index.row());
-    if (index.column() == Column::IS_SPLIT) {
-      auto checked = static_cast<Qt::CheckState>(value.toULongLong());
+    if (column == Column::kIsSplit) {
+      auto checked = value.value<Qt::CheckState>();
       line.split = (checked == Qt::CheckState::Checked);
-    } else {
-      return false;
+      success = true;
     }
-    bill_->UpdateLine(index.row(), line);
-    emit(dataChanged(index, index));
-    return true;
   }
 
-  return false;
+  if (success) {
+    bill_->UpdateLine(index.row(), line);
+    Q_EMIT(dataChanged(index, index));
+  }
+  return success;
 }
 
 void BillLineModel::AddLine(const BillLine &line) {
@@ -150,9 +144,11 @@ void BillLineModel::AddLine(const QModelIndex &index) {
   line.tax_rate = Settings::GetDefaultTaxRate();
 
   if (index.isValid()) {
+    // Add at specific position
     beginInsertRows(parent, index.row(), index.row());
     bill_->AddLine(line, index.row());
   } else {
+    // Add at end
     beginInsertRows(parent, rowCount(parent), rowCount(parent));
     bill_->AddLine(line);
   }
@@ -160,6 +156,7 @@ void BillLineModel::AddLine(const QModelIndex &index) {
 }
 
 void BillLineModel::RemoveLine(const BillLine &line) {
+  // Need to know where the line is to emit the proper signal
   for (size_t i = 0; i < bill_->GetLineCount(); i++) {
     if (bill_->GetLine(i) == line) {
       RemoveLine(i);

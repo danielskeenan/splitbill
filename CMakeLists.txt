@@ -11,6 +11,17 @@ set(CMAKE_MODULE_PATH "${PROJECT_BINARY_DIR}")
 
 set(BUILD_APP On CACHE BOOL "Build program")
 if (BUILD_APP)
+    # Platform config
+    # This is more portable across compilers compared to other methods
+    if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+        add_compile_definitions(PLATFORM_LINUX)
+    elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+        add_compile_definitions(PLATFORM_WINDOWS)
+    elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+        add_compile_definitions(PLATFORM_MACOS)
+    endif ()
+
+    include_directories(${PROJECT_SOURCE_DIR}/include)
     add_subdirectory(src)
     add_subdirectory(resources)
 

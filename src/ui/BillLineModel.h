@@ -10,7 +10,8 @@
 
 #include <QtCore/QAbstractTableModel>
 #include <QSharedPointer>
-#include "../lib/Bill.h"
+#include <unordered_map>
+#include <lib/Bill.h>
 #include "BillLineDelegate.h"
 
 namespace splitbill::ui {
@@ -25,11 +26,11 @@ class BillLineModel : public QAbstractTableModel {
  public:
   explicit BillLineModel(QSharedPointer<Bill> bill, QObject *parent);
 
-  int rowCount(const QModelIndex &parent) const override;
-  int columnCount(const QModelIndex &parent) const override;
-  Qt::ItemFlags flags(const QModelIndex &index) const override;
-  QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
-  QVariant data(const QModelIndex &index, int role) const override;
+  [[nodiscard]] int rowCount(const QModelIndex &parent) const override;
+  [[nodiscard]] int columnCount(const QModelIndex &parent) const override;
+  [[nodiscard]] Qt::ItemFlags flags(const QModelIndex &index) const override;
+  [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
+  [[nodiscard]] QVariant data(const QModelIndex &index, int role) const override;
   bool setData(const QModelIndex &index, const QVariant &value, int role) override;
 
   void AddLine(const BillLine &line);
@@ -42,14 +43,16 @@ class BillLineModel : public QAbstractTableModel {
 
  private:
   QSharedPointer<Bill> bill_;
-  typedef enum : char {
-    NAME = 0,
-    DESCRIPTION,
-    AMOUNT,
-    TAX_RATE,
-    IS_SPLIT,
-  } Column;
-  static const unsigned char COLUMN_COUNT = Column::IS_SPLIT + 1;
+  enum class Column {
+    kName = 0,
+    kDescription,
+    kAmount,
+    kTaxRate,
+    kIsSplit,
+  };
+  static const unsigned int kColumnCount = static_cast<unsigned int>(Column::kIsSplit) + 1;
+
+  static const std::unordered_map<Column, QString> kColumnNames;
 };
 
 } // splitbill::ui

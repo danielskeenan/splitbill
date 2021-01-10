@@ -1,12 +1,12 @@
 /**
- * @file config.h
+ * @file config.h.in
  *
  * @author dankeenan 
  * @date 6/3/20
  */
 
-#ifndef SPLITBILL_SRC_UI_CONFIG_H_IN_
-#define SPLITBILL_SRC_UI_CONFIG_H_IN_
+#ifndef SPLITBILL_SRC_CONFIG_H_IN_
+#define SPLITBILL_SRC_CONFIG_H_IN_
 
 #define APP_NAME "${CMAKE_PROJECT_NAME}"
 #define APP_DISPLAY_NAME "${PROJECT_DISPLAY_NAME}"
@@ -14,4 +14,4 @@
 #define APP_AUTHOR "${PROJECT_AUTHOR}"
 #define APP_DOMAIN "${PROJECT_AUTHOR_DOMAIN}"
 
-#endif //SPLITBILL_SRC_UI_CONFIG_H_IN_
+#endif //SPLITBILL_SRC_CONFIG_H_IN_

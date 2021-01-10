@@ -3,11 +3,10 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
 
-# Config
-configure_file(config.h.in config.h)
-
 add_executable(splitbill WIN32 MACOSX_BUNDLE
     main.cpp
+    AboutDialog.h
+    AboutDialog.cpp
     Settings.h
     BillLineDelegate.h
     BillLineDelegate.cpp
@@ -24,6 +23,12 @@ add_executable(splitbill WIN32 MACOSX_BUNDLE
     SplitViewModel.h
     SplitViewModel.cpp
     )
+
+if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+    find_package(BreezeIcons REQUIRED)
+    target_sources(splitbill PRIVATE ${BreezeIcons_RES_DIRS}/breeze-icons.qrc)
+endif ()
+
 set_target_properties(splitbill PROPERTIES
     MACOSX_BUNDLE_BUNDLE_NAME splitbill
     MACOSX_BUNDLE_BUNDLE_VERSION ${CMAKE_PROJECT_VERSION}
@@ -32,8 +37,9 @@ set_target_properties(splitbill PROPERTIES
     MACOSX_BUNDLE_LONG_VERSION_STRING ${CMAKE_PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${CMAKE_PROJECT_VERSION})
 
-target_link_libraries(splitbill PUBLIC splitbill_lib Qt5::Widgets)
-target_include_directories(splitbill PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+find_package(QSettingsContainer REQUIRED)
+target_link_libraries(splitbill PUBLIC splitbill_lib QSettingsContainer::QSettingsContainer Qt5::Widgets)
+target_compile_definitions(splitbill PUBLIC -DQT_NO_KEYWORDS)
 
 # Qt packaging
 if (CMAKE_SYSTEM_NAME STREQUAL "Windows")

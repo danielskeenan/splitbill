@@ -11,7 +11,8 @@
 #include <QtCore/QAbstractTableModel>
 #include <QtCore/QSharedPointer>
 #include <QtCore/QDate>
-#include "../lib/Bill.h"
+#include <unordered_map>
+#include <lib/Bill.h>
 
 namespace splitbill::ui {
 
@@ -19,26 +20,26 @@ class SplitViewModel : public QAbstractTableModel {
  Q_OBJECT
  public:
   explicit SplitViewModel(QSharedPointer<Bill> bill, QObject *parent) :
-      QAbstractTableModel(parent), bill_(bill) {}
+      QAbstractTableModel(parent), bill_(std::move(bill)) {}
 
-  int rowCount(const QModelIndex &parent) const override;
-  int columnCount(const QModelIndex &parent) const override;
-  QVariant data(const QModelIndex &index, int role) const override;
-  QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
+  [[nodiscard]] int rowCount(const QModelIndex &parent) const override;
+  [[nodiscard]] int columnCount(const QModelIndex &parent) const override;
+  [[nodiscard]] QVariant data(const QModelIndex &index, int role) const override;
+  [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
 
-  void Update(const QDate &start, const QDate &end, const QVector<PersonPeriod> people_periods);
+  void Update(const QDate &start, const QDate &end, const QVector<PersonPeriod> &people_periods);
 
  private:
   QSharedPointer<Bill> bill_;
   std::vector<BillPortion> bill_portions_;
 
-  typedef enum : char {
-    NAME = 0,
-//    GENERAL,
-//    USAGE,
-    TOTAL,
-  } Column;
-  static const unsigned char COLUMN_COUNT = Column::TOTAL + 1;
+  enum class Column {
+    kName = 0,
+    kTotal,
+  };
+  static const unsigned int kColumnCount = static_cast<unsigned int>(Column::kTotal) + 1;
+
+  static const std::unordered_map<Column, QString> kColumnNames;
 };
 
 } // splitbill::ui

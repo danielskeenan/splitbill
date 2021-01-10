@@ -20,8 +20,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) : QDialog(parent) {
 
 void SettingsDialog::InitUi() {
   setWindowTitle(tr("Preferences"));
-  auto *layout = new QVBoxLayout;
-  setLayout(layout);
+  auto *layout = new QVBoxLayout(this);
   auto *default_form = new QGroupBox(tr("Defaults"), this);
   auto *form_layout = new QFormLayout;
   default_form->setLayout(form_layout);
@@ -39,18 +38,17 @@ void SettingsDialog::InitUi() {
   // Default people
   auto *default_people_layout = new QVBoxLayout;
   widgets_.defaultPeople = new QListWidget(this);
-//  widgets_.defaultPeople->setEditTriggers(QListWidget::EditTrigger::AllEditTriggers);
-  connect(widgets_.defaultPeople, &QListWidget::currentItemChanged, this, &SettingsDialog::s_SelectedPersonChanged);
+  connect(widgets_.defaultPeople, &QListWidget::currentItemChanged, this, &SettingsDialog::SSelectedPersonChanged);
   widgets_.defaultPeople->addItems(Settings::GetDefaultPeople());
   default_people_layout->addWidget(widgets_.defaultPeople);
   auto *default_people_buttons = new QDialogButtonBox(this);
   auto *add_default_person = new QPushButton(tr("Add"), this);
-  add_default_person->setIcon(QIcon(":/add"));
-  connect(add_default_person, &QPushButton::clicked, this, &SettingsDialog::s_AddPerson);
+  add_default_person->setIcon(QIcon::fromTheme("list-add"));
+  connect(add_default_person, &QPushButton::clicked, this, &SettingsDialog::SAddPerson);
   default_people_buttons->addButton(add_default_person, QDialogButtonBox::ActionRole);
   auto *remove_default_person = new QPushButton(tr("Remove"), this);
-  remove_default_person->setIcon(QIcon(":/remove"));
-  connect(remove_default_person, &QPushButton::clicked, this, &SettingsDialog::s_RemovePerson);
+  remove_default_person->setIcon(QIcon::fromTheme("list-remove"));
+  connect(remove_default_person, &QPushButton::clicked, this, &SettingsDialog::SRemovePerson);
   default_people_buttons->addButton(remove_default_person, QDialogButtonBox::ActionRole);
   default_people_layout->addWidget(default_people_buttons);
   form_layout->addRow(tr("People"), default_people_layout);
@@ -64,7 +62,7 @@ void SettingsDialog::InitUi() {
   layout->addWidget(dialog_buttons);
 }
 
-void SettingsDialog::s_AddPerson() {
+void SettingsDialog::SAddPerson() {
   QItemSelectionModel *selection = widgets_.defaultPeople->selectionModel();
   int index;
   if (selection->hasSelection()) {
@@ -77,14 +75,14 @@ void SettingsDialog::s_AddPerson() {
   widgets_.defaultPeople->setCurrentRow(index);
 }
 
-void SettingsDialog::s_RemovePerson() {
+void SettingsDialog::SRemovePerson() {
   QItemSelectionModel *selection = widgets_.defaultPeople->selectionModel();
   if (selection->hasSelection()) {
     widgets_.defaultPeople->takeItem(selection->currentIndex().row());
   }
 }
 
-void SettingsDialog::s_SelectedPersonChanged(QListWidgetItem *current, QListWidgetItem *previous) {
+void SettingsDialog::SSelectedPersonChanged(QListWidgetItem *current, QListWidgetItem *previous) {
   if (current) {
     current->setFlags(current->flags() | Qt::ItemFlag::ItemIsEditable);
   }
@@ -97,11 +95,10 @@ void SettingsDialog::accept() {
   Settings::SetDefaultTaxRate(widgets_.defaultTaxRate->value() / 100);
   QStringList default_people;
   default_people.reserve(widgets_.defaultPeople->count());
-  for (int i = 0; i < widgets_.defaultPeople->count(); i++) {
+  for (int i = 0; i < widgets_.defaultPeople->count(); ++i) {
     default_people.append(widgets_.defaultPeople->item(i)->data(Qt::ItemDataRole::DisplayRole).toString());
   }
   Settings::SetDefaultPeople(default_people);
-  QDialog::accept();
 }
 
 } // splitbill::ui

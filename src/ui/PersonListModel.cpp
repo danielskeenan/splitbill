@@ -7,12 +7,19 @@
 
 #include <QtCore/QSet>
 #include <QtCore/QDate>
+#include <utility>
 #include "PersonListModel.h"
 
 namespace splitbill::ui {
 
+const std::unordered_map<PersonListModel::Column, QString> PersonListModel::kColumnNames{
+    {Column::kName, tr("Name")},
+    {Column::kStart, tr("From")},
+    {Column::kEnd, tr("To")},
+};
+
 PersonListModel::PersonListModel(QSharedPointer<QVector<PersonPeriod>> people, QObject *parent) :
-    QAbstractTableModel(parent), people_(people) {
+    QAbstractTableModel(parent), people_(std::move(people)) {
 
 }
 
@@ -21,7 +28,7 @@ int PersonListModel::rowCount(const QModelIndex &parent) const {
 }
 
 int PersonListModel::columnCount(const QModelIndex &parent) const {
-  return COLUMN_COUNT;
+  return kColumnCount;
 }
 
 Qt::ItemFlags PersonListModel::flags(const QModelIndex &index) const {
@@ -30,83 +37,85 @@ Qt::ItemFlags PersonListModel::flags(const QModelIndex &index) const {
 }
 
 QVariant PersonListModel::data(const QModelIndex &index, int role) const {
-  if (!index.isValid()) {
-    return QVariant();
-  }
-
+  const auto column = static_cast<Column>(index.column());
   const PersonPeriod &person = people_->at(index.row());
   if (role == Qt::ItemDataRole::DisplayRole) {
-    if (index.column() == Column::NAME) {
+    if (column == Column::kName) {
       return QString::fromStdString(person.GetName());
-    } else if (index.column() == Column::START) {
+    } else if (column == Column::kStart) {
       const QDate start_date(person.GetPeriod().begin().year(),
                              person.GetPeriod().begin().month(),
                              person.GetPeriod().begin().day());
       return QLocale().toString(start_date, QLocale::ShortFormat);
-    } else if (index.column() == Column::END) {
+    } else if (column == Column::kEnd) {
       const QDate end_date(person.GetPeriod().end().year(),
                            person.GetPeriod().end().month(),
                            person.GetPeriod().end().day());
       return QLocale().toString(end_date, QLocale::ShortFormat);
     }
   } else if (role == Qt::ItemDataRole::EditRole) {
-    if (index.column() == Column::NAME) {
+    if (column == Column::kName) {
       return QString::fromStdString(person.GetName());
-    } else if (index.column() == Column::START) {
-      return QDate::fromString(QString::fromStdString(person.GetStart()), Qt::DateFormat::ISODate);
-    } else if (index.column() == Column::END) {
-      return QDate::fromString(QString::fromStdString(person.GetEnd()), Qt::DateFormat::ISODate);
+    } else if (column == Column::kStart) {
+      return QDate(person.GetPeriod().begin().year(),
+                   person.GetPeriod().begin().month(),
+                   person.GetPeriod().begin().day());
+    } else if (column == Column::kEnd) {
+      return QDate(person.GetPeriod().end().year(),
+                   person.GetPeriod().end().month(),
+                   person.GetPeriod().end().day());
     }
   }
 
-  return QVariant();
+  return {};
 }
 
 bool PersonListModel::setData(const QModelIndex &index, const QVariant &value, int role) {
-  if (!index.isValid()) {
-    return false;
-  }
+  const auto column = static_cast<Column>(index.column());
+  PersonPeriod person = people_->at(index.row());
+  bool success = false;
+
   if (role == Qt::ItemDataRole::EditRole) {
-    PersonPeriod person = people_->at(index.row());
-    if (index.column() == Column::NAME) {
+    if (column == Column::kName) {
       person.SetName(value.toString().toStdString());
-    } else if (index.column() == Column::START) {
+      success = true;
+    } else if (column == Column::kStart) {
       person.SetStart(value.toDate().toString(Qt::DateFormat::ISODate).toStdString());
-    } else if (index.column() == Column::END) {
+      success = true;
+    } else if (column == Column::kEnd) {
       person.SetEnd(value.toDate().toString(Qt::DateFormat::ISODate).toStdString());
+      success = true;
     }
-    people_->replace(index.row(), person);
-    emit dataChanged(index, index);
-    return true;
   }
 
-  return false;
+  if (success) {
+    people_->replace(index.row(), person);
+    Q_EMIT(dataChanged(index, index));
+  }
+
+  return success;
 }
 
-#define COL_HEADER_LABEL(col, label) case col: return _("Person table column header", label)
-
 QVariant PersonListModel::headerData(int section, Qt::Orientation orientation, int role) const {
+  const auto column = static_cast<Column>(section);
   if (role == Qt::ItemDataRole::DisplayRole) {
     if (orientation == Qt::Orientation::Horizontal) {
-      switch (section) {
-        case Column::NAME:return tr("Name");
-        case Column::START:return tr("From");
-        case Column::END:return tr("To");
-        default: return QVariant();
-      }
+      return kColumnNames.at(column);
     }
   }
 
-  return QVariant();
+  return {};
 }
 
 void PersonListModel::AddLine(const PersonPeriod &person_period, const QModelIndex &index) {
   const QModelIndex parent;
 
   if (index.isValid()) {
+    // Insert at specific position
     beginInsertRows(parent, index.row(), index.row());
     people_->insert(index.row(), person_period);
   } else {
+    // Insert at end
     beginInsertRows(parent, rowCount(parent), rowCount(parent));
     people_->append(person_period);
   }

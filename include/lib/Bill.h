@@ -5,8 +5,8 @@
  * @date 6/3/20
  */
 
-#ifndef SPLITBILL_SRC_LIB_BILL_H_
-#define SPLITBILL_SRC_LIB_BILL_H_
+#ifndef SPLITBILL_INCLUDE_LIB_BILL_H_
+#define SPLITBILL_INCLUDE_LIB_BILL_H_
 
 #include <string>
 #include <vector>
@@ -22,8 +22,8 @@ typedef boost::multiprecision::cpp_dec_float_50 Money;
  * Bill Line
  */
 struct BillLine {
-  std::string name = "";
-  std::string description = "";
+  std::string name;
+  std::string description;
   Money tax_rate = 0;
   Money amount = 0;
   bool split = true;
@@ -44,8 +44,6 @@ struct BillLine {
   }
 };
 
-typedef std::vector<BillLine> BillLineList;
-
 /**
  * Bill, post split
  */
@@ -54,17 +52,17 @@ class SplitBill {
   SplitBill(const Money &usage_total, const Money &general_total)
       : usageTotal_(usage_total), generalTotal_(general_total) {}
 
-  const Money &GetMoneyUsageTotal() const { return usageTotal_; }
+  [[nodiscard]] const Money &GetMoneyUsageTotal() const { return usageTotal_; }
 
-  const double GetUsageTotal() const { return GetMoneyUsageTotal().convert_to<double>(); }
+  [[nodiscard]] double GetUsageTotal() const { return GetMoneyUsageTotal().convert_to<double>(); }
 
-  const Money &GetMoneyGeneralTotal() const { return generalTotal_; }
+  [[nodiscard]] const Money &GetMoneyGeneralTotal() const { return generalTotal_; }
 
-  const double GetGeneralTotal() const { return GetMoneyGeneralTotal().convert_to<double>(); }
+  [[nodiscard]] double GetGeneralTotal() const { return GetMoneyGeneralTotal().convert_to<double>(); }
 
-  const Money GetMoneyTotal() const { return GetMoneyUsageTotal() + GetMoneyGeneralTotal(); }
+  [[nodiscard]] Money GetMoneyTotal() const { return GetMoneyUsageTotal() + GetMoneyGeneralTotal(); }
 
-  const double GetTotal() const { return GetMoneyTotal().convert_to<double>(); }
+  [[nodiscard]] double GetTotal() const { return GetMoneyTotal().convert_to<double>(); }
 
  private:
   const Money usageTotal_;
@@ -79,7 +77,7 @@ class BillPortion : public SplitBill {
   explicit BillPortion(const std::string &name, const Money &usage_total, const Money &general_total) :
       SplitBill(usage_total, general_total), name_(name) {}
 
-  const std::string GetName() const { return name_; }
+  [[nodiscard]] const std::string GetName() const { return name_; }
 
  private:
   std::string name_;
@@ -91,7 +89,7 @@ class BillPortion : public SplitBill {
 class PersonPeriod {
  public:
   explicit PersonPeriod() :
-      name_(""),
+  // 1 day
       period_(boost::gregorian::date_period(boost::gregorian::day_clock::local_day(),
                                             boost::gregorian::day_clock::local_day()
                                                 + boost::gregorian::date_duration(1))) {}
@@ -117,21 +115,21 @@ class PersonPeriod {
                                                  boost::gregorian::from_string(end)
                                                      + boost::gregorian::date_duration(1))) {}
 
-  [[nodiscard]] const std::string GetName() const { return name_; }
+  [[nodiscard]] const std::string &GetName() const { return name_; }
 
   void SetName(const std::string &name) { name_ = name; }
 
-  [[nodiscard]] const boost::gregorian::date_period GetPeriod() const { return period_; }
+  [[nodiscard]] const boost::gregorian::date_period &GetPeriod() const { return period_; }
 
   void SetPeriod(const boost::gregorian::date_period &period) { period_ = period; }
 
-  [[nodiscard]] const std::string GetStart() const { return boost::gregorian::to_iso_extended_string(period_.begin()); }
+  [[nodiscard]] std::string GetStart() const { return boost::gregorian::to_iso_extended_string(period_.begin()); }
 
   void SetStart(const std::string &start) {
     period_ = boost::gregorian::date_period(boost::gregorian::from_string(start), period_.end());
   }
 
-  [[nodiscard]] const std::string GetEnd() const { return boost::gregorian::to_iso_extended_string(period_.last()); }
+  [[nodiscard]] std::string GetEnd() const { return boost::gregorian::to_iso_extended_string(period_.last()); }
 
   void SetEnd(const std::string &end) {
     period_ = boost::gregorian::date_period(period_.begin(),
@@ -146,10 +144,10 @@ class PersonPeriod {
 /**
  * Validation errors
  */
-typedef enum {
-  VALID = 0,
-  LINE_SUM_NOT_TOTAL,
-} ValidationError;
+enum class ValidationError {
+  kValid = 0,
+  kLineSumNotTotal,
+};
 
 /**
  * Bill
@@ -204,7 +202,7 @@ class Bill {
     return total_amount_;
   }
 
-  [[nodiscard]] const double GetTotalAmount() const {
+  [[nodiscard]] double GetTotalAmount() const {
     return total_amount_.convert_to<double>();
   }
 
@@ -216,7 +214,7 @@ class Bill {
     total_amount_ = total_amount;
   }
 
-  [[nodiscard]] const BillLineList &GetLines() const {
+  [[nodiscard]] const std::vector<BillLine> &GetLines() const {
     return lines_;
   }
 
@@ -224,16 +222,11 @@ class Bill {
     return lines_.at(pos);
   }
 
-  [[nodiscard]] const size_t GetLineCount() const {
+  [[nodiscard]] size_t GetLineCount() const {
     return lines_.size();
   }
 
   void AddLine(const BillLine &line, const size_t &pos) {
-//    for (const auto &test : lines_) {
-//      if (test == line) {
-//        return;
-//      }
-//    }
     lines_.insert(lines_.cbegin() + pos, line);
   }
 
@@ -246,29 +239,25 @@ class Bill {
   }
 
   void RemoveLine(const BillLine &line) {
-    for (size_t i = 0; i < lines_.size(); i++) {
-      if (lines_.at(i) == line) {
-        RemoveLine(i);
-        return;
-      }
-    }
+    lines_.erase(std::remove(lines_.begin(), lines_.end(), line));
   }
 
   void UpdateLine(const size_t &pos, const BillLine &line) {
-    lines_.erase(lines_.cbegin() + pos);
-    lines_.insert(lines_.cbegin() + pos, line);
+    lines_[pos] = line;
   }
 
  private:
   Money total_amount_;
-  BillLineList lines_;
+  std::vector<BillLine> lines_;
 
-  static std::vector<Money> GetAmounts(const BillLineList &lines);
-  static std::vector<BillLine> ApplyTax(const BillLineList &lines);
-  static void SortLinesBySplit(const BillLineList &lines, BillLineList &split_lines, BillLineList &not_split_lines);
+  static std::vector<Money> GetAmounts(const std::vector<BillLine> &lines);
+  static std::vector<BillLine> ApplyTax(const std::vector<BillLine> &lines);
+  static void SortLinesBySplit(const std::vector<BillLine> &lines,
+                               std::vector<BillLine> &split_lines,
+                               std::vector<BillLine> &not_split_lines);
   static Money Accumulate(const std::vector<Money> &items);
 };
 
 } // splitbill
 
-#endif //SPLITBILL_SRC_LIB_BILL_H_
+#endif //SPLITBILL_INCLUDE_LIB_BILL_H_

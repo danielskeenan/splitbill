@@ -1,5 +1,7 @@
 [requires]
-boost/1.75.0
+boost/[~=1.75.0]
+QSettingsContainer/[~=1.0]@dragoonboots/stable
+qt-breeze-icons/[~=5.54]@dragoonboots/stable
 
 [generators]
 cmake_find_package
@@ -43,3 +45,4 @@ boost:without_thread=True
 boost:without_timer=True
 boost:without_type_erasure=True
 boost:without_wave=True
+qt-breeze-icons:pattern=list-add|list-remove

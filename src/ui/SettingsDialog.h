@@ -19,22 +19,22 @@ class SettingsDialog : public QDialog {
  public:
   explicit SettingsDialog(QWidget *parent = nullptr);
 
- public slots:
+ public Q_SLOTS:
   void accept() override;
 
  private:
   struct Widgets {
-    QDoubleSpinBox *defaultTaxRate;
-    QListWidget *defaultPeople;
+    QDoubleSpinBox *defaultTaxRate = nullptr;
+    QListWidget *defaultPeople = nullptr;
   };
   Widgets widgets_;
 
   void InitUi();
 
- private slots:
-  void s_AddPerson();
-  void s_RemovePerson();
-  void s_SelectedPersonChanged(QListWidgetItem *current, QListWidgetItem *previous);
+ private Q_SLOTS:
+  void SAddPerson();
+  void SRemovePerson();
+  void SSelectedPersonChanged(QListWidgetItem *current, QListWidgetItem *previous);
 };
 
 } // splitbill::ui

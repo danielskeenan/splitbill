@@ -10,17 +10,18 @@
 namespace splitbill {
 
 SplitBill Bill::Total() {
-  if (lines_.size() == 0) {
+  if (lines_.empty()) {
     // Empty bill
     return SplitBill(0, 0);
   }
 
   // Get the lines that refer to usage and those that don't.
-  BillLineList usage_lines;
-  BillLineList general_lines;
+  std::vector<BillLine> usage_lines;
+  std::vector<BillLine> general_lines;
   SortLinesBySplit(lines_, usage_lines, general_lines);
 
   // Sanity check to ensure there's something to work with for the rest of the process.
+  // These lines have amount and tax rate 0 so they won't affect calculations
   if (usage_lines.empty()) {
     BillLine dummy_usage;
     dummy_usage.split = true;
@@ -33,7 +34,7 @@ SplitBill Bill::Total() {
   }
 
   // Apply tax
-  const BillLineList all_lines = ApplyTax(lines_);
+  const std::vector<BillLine> all_lines = ApplyTax(lines_);
   usage_lines = ApplyTax(usage_lines);
   general_lines = ApplyTax(general_lines);
 
@@ -45,9 +46,7 @@ SplitBill Bill::Total() {
   const Money usage_total = Accumulate(usage_amounts);
   const Money general_total = Accumulate(general_amounts);
 
-  SplitBill split_bill(usage_total, general_total);
-
-  return split_bill;
+  return SplitBill(usage_total, general_total);
 }
 
 #define FOR_DAY_IN_PERIOD(day_var, period) for (boost::gregorian::date day_var = period.begin(); day_var <= period.last(); day_var += boost::gregorian::date_duration(1))
@@ -117,15 +116,15 @@ bool Bill::IsValid(ValidationError &error) {
   // Check line total equals bill total, with tax applied
   SplitBill totals = Total();
   if (std::abs(totals.GetTotal() - GetTotalAmount()) >= 0.01) {
-    error = ValidationError::LINE_SUM_NOT_TOTAL;
+    error = ValidationError::kLineSumNotTotal;
     return false;
   }
 
-  error = ValidationError::VALID;
+  error = ValidationError::kValid;
   return true;
 }
 
-std::vector<Money> Bill::GetAmounts(const BillLineList &lines) {
+std::vector<Money> Bill::GetAmounts(const std::vector<BillLine> &lines) {
   std::vector<Money> amounts;
   amounts.reserve(lines.size());
   for (const auto &line : lines) {
@@ -135,7 +134,7 @@ std::vector<Money> Bill::GetAmounts(const BillLineList &lines) {
   return amounts;
 }
 
-std::vector<BillLine> Bill::ApplyTax(const BillLineList &lines) {
+std::vector<BillLine> Bill::ApplyTax(const std::vector<BillLine> &lines) {
   std::vector<BillLine> taxed_lines;
   taxed_lines.reserve(lines.size());
   for (const auto &line : lines) {
@@ -147,7 +146,9 @@ std::vector<BillLine> Bill::ApplyTax(const BillLineList &lines) {
   return taxed_lines;
 }
 
-void Bill::SortLinesBySplit(const BillLineList &lines, BillLineList &split_lines, BillLineList &not_split_lines) {
+void Bill::SortLinesBySplit(const std::vector<BillLine> &lines,
+                            std::vector<BillLine> &split_lines,
+                            std::vector<BillLine> &not_split_lines) {
   split_lines.clear();
   not_split_lines.clear();
 
