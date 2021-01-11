@@ -5,6 +5,7 @@
  * @date 6/3/20
  */
 
+#include <numeric>
 #include "Bill.h"
 
 namespace splitbill {
@@ -12,7 +13,7 @@ namespace splitbill {
 SplitBill Bill::Total() {
   if (lines_.empty()) {
     // Empty bill
-    return SplitBill(0, 0);
+    return SplitBill(Money(0, total_amount_.GetCurrency()), Money(0, total_amount_.GetCurrency()));
   }
 
   // Get the lines that refer to usage and those that don't.
@@ -42,9 +43,12 @@ SplitBill Bill::Total() {
   const std::vector<Money> all_amounts = GetAmounts(all_lines);
   const std::vector<Money> usage_amounts = GetAmounts(usage_lines);
   const std::vector<Money> general_amounts = GetAmounts(general_lines);
-  const Money all_total = Accumulate(all_amounts);
-  const Money usage_total = Accumulate(usage_amounts);
-  const Money general_total = Accumulate(general_amounts);
+  const Money all_total =
+      std::accumulate(all_amounts.cbegin(), all_amounts.cend(), Money(0, total_amount_.GetCurrency()));
+  const Money usage_total =
+      std::accumulate(usage_amounts.cbegin(), usage_amounts.cend(), Money(0, total_amount_.GetCurrency()));
+  const Money general_total =
+      std::accumulate(general_amounts.cbegin(), general_amounts.cend(), Money(0, total_amount_.GetCurrency()));
 
   return SplitBill(usage_total, general_total);
 }
@@ -59,7 +63,7 @@ std::vector<splitbill::BillPortion> Bill::Split(const boost::gregorian::date_per
   }
 
   SplitBill totals = Total();
-  const Money usage_part = totals.GetMoneyUsageTotal() / period.length().days();
+  const Money usage_part = totals.GetUsageTotal() / period.length().days();
 
   // First pass: Determine how many parts each day must be split into.
   std::map<boost::gregorian::date, unsigned int> day_parts;
@@ -79,7 +83,7 @@ std::vector<splitbill::BillPortion> Bill::Split(const boost::gregorian::date_per
     day_parts.insert({day, day_part_count});
   }
   // Handle days where no person was present
-  const Money everyone_usage = everyone_usage_days * (usage_part / people.size());
+  const Money everyone_usage = (usage_part / people.size()) * everyone_usage_days;
 
   // Second pass: divide the amount into chunks for each day, then divide those chunks into parts for
   // each user present on that day.  The end result of this is that presence on a given day costs a
@@ -90,7 +94,7 @@ std::vector<splitbill::BillPortion> Bill::Split(const boost::gregorian::date_per
   }
 
   // Third pass: total each user's contribution.
-  const Money general_chunk = totals.GetMoneyGeneralTotal() / people.size();
+  const Money general_chunk = totals.GetGeneralTotal() / people.size();
   std::vector<splitbill::BillPortion> portions;
   portions.reserve(people.size());
   for (const auto &person : people) {
@@ -103,7 +107,7 @@ std::vector<splitbill::BillPortion> Bill::Split(const boost::gregorian::date_per
         if (!person_period.GetPeriod().contains(day)) {
           continue;
         }
-        person_usage += day_usage_amounts.at(day);
+        person_usage = person_usage + day_usage_amounts.at(day);
       }
     }
     portions.emplace_back(person, person_usage, general_chunk);
@@ -115,7 +119,7 @@ std::vector<splitbill::BillPortion> Bill::Split(const boost::gregorian::date_per
 bool Bill::IsValid(ValidationError &error) {
   // Check line total equals bill total, with tax applied
   SplitBill totals = Total();
-  if (std::abs(totals.GetTotal() - GetTotalAmount()) >= 0.01) {
+  if (std::abs((totals.GetTotal() - GetTotalAmount()).GetValue()) >= total_amount_.GetCurrency().error_margin()) {
     error = ValidationError::kLineSumNotTotal;
     return false;
   }
@@ -159,20 +163,6 @@ void Bill::SortLinesBySplit(const std::vector<BillLine> &lines,
       not_split_lines.push_back(line);
     }
   }
-}
-
-Money Bill::Accumulate(const std::vector<Money> &items) {
-  // Use Kahan summation to compensate for lost precision
-  Money sum = 0.0;
-  Money c = 0.0;
-  for (const auto &item : items) {
-    const Money y = item - c;
-    const Money t = sum + y;
-    c = (t - sum) - y;
-    sum = t;
-  }
-
-  return sum;
 }
 
 } // splitbill

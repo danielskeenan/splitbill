@@ -16,7 +16,8 @@ Money::Money(const double &value, Currency::Info currency) :
     currency_(std::move(currency)), value_(value) {}
 
 double Money::GetValue() const {
-  return std::round((value_ * currency_.multiplier).convert_to<double>()) / currency_.multiplier;
+  const unsigned int multiplier = currency_.multiplier();
+  return std::round((value_ * multiplier).convert_to<double>()) / multiplier;
 }
 
 const Currency::Info &Money::GetCurrency() const {
@@ -28,8 +29,16 @@ bool Money::operator==(const Money &rhs) const {
       value_ == rhs.value_;
 }
 
+bool Money::operator==(double rhs) const {
+  return value_ == rhs;
+}
+
 bool Money::operator!=(const Money &rhs) const {
   return !(rhs == *this);
+}
+
+bool Money::operator!=(double rhs) const {
+  return value_ != rhs;
 }
 
 bool Money::operator<(const Money &rhs) const {
@@ -39,16 +48,32 @@ bool Money::operator<(const Money &rhs) const {
   return value_ < rhs.value_;
 }
 
+bool Money::operator<(double rhs) const {
+  return value_ < rhs;
+}
+
 bool Money::operator>(const Money &rhs) const {
   return rhs < *this;
+}
+
+bool Money::operator>(double rhs) const {
+  return value_ > rhs;
 }
 
 bool Money::operator<=(const Money &rhs) const {
   return !(rhs < *this);
 }
 
+bool Money::operator<=(double rhs) const {
+  return value_ <= rhs;
+}
+
 bool Money::operator>=(const Money &rhs) const {
   return !(*this < rhs);
+}
+
+bool Money::operator>=(double rhs) const {
+  return value_ >= rhs;
 }
 
 #define MONEY_OP(op) \
@@ -59,7 +84,7 @@ bool Money::operator>=(const Money &rhs) const {
     return Money(value_ op rhs.value_, currency_); \
   } \
   \
-  Money Money::operator op(const double &rhs) const { \
+  Money Money::operator op(double rhs) const { \
     return Money(value_ op rhs, currency_); \
   } \
 

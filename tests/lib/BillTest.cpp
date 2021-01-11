@@ -11,59 +11,60 @@
 #include <vector>
 #include <lib/Bill.h>
 
-namespace splitbill_test {
+using namespace splitbill;
 
-static const float RESULT_ERROR_MARGIN = 0.01;
+static const double kResultErrorMargin = Currency::Get(splitbill::Currency::Code::USD).error_margin();
 
 class BillTest : public ::testing::Test {
  protected:
   void SetUp() override {
     // Unsplit, taxed
     line_unsplit_taxed_.name = "Unsplit, taxed";
-    line_unsplit_taxed_.amount = 30.95;
+    line_unsplit_taxed_.amount = Money(30.95, Currency::Code::USD);
     line_unsplit_taxed_.split = false;
     line_unsplit_taxed_.tax_rate = 0.07;
     bill_.AddLine(line_unsplit_taxed_);
 
     // Unsplit, untaxed
     line_unsplit_untaxed_.name = "Unsplit, untaxed";
-    line_unsplit_untaxed_.amount = 30.95;
+    line_unsplit_untaxed_.amount = Money(30.95, Currency::Code::USD);
     line_unsplit_untaxed_.split = false;
     line_unsplit_untaxed_.tax_rate = 0;
     bill_.AddLine(line_unsplit_untaxed_);
 
     // Split, taxed
     line_split_taxed_.name = "Split, taxed";
-    line_split_taxed_.amount = 40.95;
+    line_split_taxed_.amount = Money(40.95, Currency::Code::USD);
     line_split_taxed_.split = true;
     line_split_taxed_.tax_rate = 0.07;
     bill_.AddLine(line_split_taxed_);
 
     // Split, untaxed
     line_split_untaxed_.name = "Split, untaxed";
-    line_split_untaxed_.amount = 40.95;
+    line_split_untaxed_.amount = Money(40.95, Currency::Code::USD);
     line_split_untaxed_.split = true;
     line_split_untaxed_.tax_rate = 0;
     bill_.AddLine(line_split_untaxed_);
   }
 
-  splitbill::BillLine line_unsplit_taxed_;
-  splitbill::BillLine line_unsplit_untaxed_;
-  splitbill::BillLine line_split_taxed_;
-  splitbill::BillLine line_split_untaxed_;
+  BillLine line_unsplit_taxed_;
+  BillLine line_unsplit_untaxed_;
+  BillLine line_split_taxed_;
+  BillLine line_split_untaxed_;
 
-  splitbill::Bill bill_;
+  Bill bill_;
 };
 
 /**
  * Lines are added properly
  */
 TEST_F(BillTest, LinesAdded) {
-  splitbill::Bill bill;
+  Bill bill;
 
   ASSERT_EQ(bill.GetLines().size(), 0) << "New bill is not empty";
   for (unsigned int i = 0; i < 3; i++) {
-    splitbill::BillLine line{"Test Line" + std::to_string(i)};
+    BillLine line;
+    line.name = "Test Line" + std::to_string(i);
     bill.AddLine(line);
     ASSERT_EQ(bill.GetLines().size(), i + 1) << "Bill line not added";
     ASSERT_EQ(bill.GetLines().at(i), line) << "Added line is not the same";
@@ -74,14 +75,17 @@ TEST_F(BillTest, LinesAdded) {
  * Lines are removed preserving order
  */
 TEST_F(BillTest, LinesRemoved) {
-  splitbill::Bill bill;
+  Bill bill;
 
   // Add lines
-  splitbill::BillLine line_1{"Test Line 1"};
+  BillLine line_1;
+  line_1.name = "Test Line 1";;
   bill.AddLine(line_1);
-  splitbill::BillLine line_2{"Test Line 2"};
+  BillLine line_2;
+  line_2.name = "Test Line 2";;
   bill.AddLine(line_2);
-  splitbill::BillLine line_3{"Test Line 3"};
+  BillLine line_3;
+  line_3.name = "Test Line 3";;
   bill.AddLine(line_3);
 
   bill.RemoveLine(line_2);
@@ -94,21 +98,24 @@ TEST_F(BillTest, LinesRemoved) {
  * Lines are updated properly
  */
 TEST_F(BillTest, LinesUpdated) {
-  splitbill::Bill bill;
+  Bill bill;
 
   // Add lines
-  splitbill::BillLine line_1{"Test Line 1"};
-  line_1.amount = 51.00;
+  BillLine line_1;
+  line_1.name = "Test Line 1";;
+  line_1.amount = Money(51.00, Currency::Code::USD);
   bill.AddLine(line_1);
-  splitbill::BillLine line_2{"Test Line 2"};
-  line_2.amount = 52.00;
+  BillLine line_2;
+  line_2.name = "Test Line 2";;
+  line_2.amount = Money(52.00, Currency::Code::USD);
   bill.AddLine(line_2);
-  splitbill::BillLine line_3{"Test Line 3"};
-  line_3.amount = 53.00;
+  BillLine line_3;
+  line_3.name = "Test Line 3";;
+  line_3.amount = Money(53.00, Currency::Code::USD);
   bill.AddLine(line_3);
 
   ASSERT_EQ(bill.GetLine(1), line_2) << "Line not inserted correctly";
-  line_2.amount = 42.00;
+  line_2.amount = Money(42.00, Currency::Code::USD);
   bill.UpdateLine(1, line_2);
   EXPECT_EQ(bill.GetLine(0).amount, 51.00) << "Wrong line updated";
   EXPECT_EQ(bill.GetLine(1).amount, 42.00) << "Line not updated";
@@ -119,12 +126,13 @@ TEST_F(BillTest, LinesUpdated) {
  * Totals calculated properly
  */
 TEST_F(BillTest, Total) {
-  splitbill::SplitBill totals = bill_.Total();
+  SplitBill totals = bill_.Total();
 
   // Hand-calculated results
-  ASSERT_NEAR(totals.GetGeneralTotal(), 64.07, RESULT_ERROR_MARGIN) << "General total calculated incorrectly";
-  ASSERT_NEAR(totals.GetUsageTotal(), 84.77, RESULT_ERROR_MARGIN) << "Usage total calculated incorrectly";
-  ASSERT_NEAR(totals.GetTotal(), 148.84, RESULT_ERROR_MARGIN) << "Total calculated incorrectly";
+  ASSERT_NEAR(totals.GetGeneralTotal().GetValue(), 64.07, kResultErrorMargin)
+                << "General total calculated incorrectly";
+  ASSERT_NEAR(totals.GetUsageTotal().GetValue(), 84.77, kResultErrorMargin) << "Usage total calculated incorrectly";
+  ASSERT_NEAR(totals.GetTotal().GetValue(), 148.83, kResultErrorMargin) << "Total calculated incorrectly";
 }
 
 /**
@@ -132,20 +140,20 @@ TEST_F(BillTest, Total) {
  */
 TEST_F(BillTest, Split) {
   const std::string person_one_week = "Person present one week";
-  const splitbill::PersonPeriod persion_period_one_week(person_one_week, "2020-1-8", "2020-1-14");
+  const PersonPeriod person_period_one_week(person_one_week, "2020-1-8", "2020-1-14");
   const std::string person_two_weeks = "Person present two weeks";
-  const splitbill::PersonPeriod person_period_two_weeks_1(person_two_weeks, "2020-1-7", "2020-1-12");
-  const splitbill::PersonPeriod person_period_two_weeks_2(person_two_weeks, "2020-1-21", "2020-1-27");
+  const PersonPeriod person_period_two_weeks_1(person_two_weeks, "2020-1-7", "2020-1-12");
+  const PersonPeriod person_period_two_weeks_2(person_two_weeks, "2020-1-21", "2020-1-27");
   const std::string person_absent = "Person absent";
   const std::vector<std::string> people{person_one_week, person_two_weeks, person_absent};
-  const std::vector<splitbill::PersonPeriod> periods{
-      persion_period_one_week, person_period_two_weeks_1, person_period_two_weeks_2
+  const std::vector<PersonPeriod> periods{
+      person_period_one_week, person_period_two_weeks_1, person_period_two_weeks_2
   };
-  const std::vector<splitbill::BillPortion> portion_list = bill_.Split("2020-1-1", "2020-1-31", periods, people);
+  const std::vector<BillPortion> portion_list = bill_.Split("2020-1-1", "2020-1-31", periods, people);
   ASSERT_EQ(portion_list.size(), 3) << "Not all people have bill portions";
 
   // Need to extract the results to compare them
-  std::unordered_map<std::string, splitbill::BillPortion> portions;
+  std::unordered_map<std::string, BillPortion> portions;
   for (const auto &portion : portion_list) {
     portions.insert({portion.GetName(), portion});
   }
@@ -155,43 +163,41 @@ TEST_F(BillTest, Split) {
   ASSERT_NO_THROW((void) portions.at(person_absent)) << "Bill missing absent person";
 
   // Hand-calculated results
-  EXPECT_NEAR(portions.at(person_one_week).GetTotal()
-                  + portions.at(person_two_weeks).GetTotal()
-                  + portions.at(person_absent).GetTotal(),
-              148.84, RESULT_ERROR_MARGIN)
+  EXPECT_NEAR((portions.at(person_one_week).GetTotal()
+      + portions.at(person_two_weeks).GetTotal()
+      + portions.at(person_absent).GetTotal()).GetValue(),
+              148.83, kResultErrorMargin)
             << "Split total not equal to actual total";
-  EXPECT_NEAR(portions.at(person_one_week).GetUsageTotal(), 26.89, RESULT_ERROR_MARGIN)
+  EXPECT_NEAR(portions.at(person_one_week).GetUsageTotal().GetValue(), 26.89, kResultErrorMargin)
             << "Person (one week) usage calculated incorrectly";
-  EXPECT_NEAR(portions.at(person_one_week).GetGeneralTotal(), 21.36, RESULT_ERROR_MARGIN)
+  EXPECT_NEAR(portions.at(person_one_week).GetGeneralTotal().GetValue(), 21.36, kResultErrorMargin)
             << "Person (one week) general calculated incorrectly";
-  EXPECT_NEAR(portions.at(person_one_week).GetTotal(), 48.25, RESULT_ERROR_MARGIN)
+  EXPECT_NEAR(portions.at(person_one_week).GetTotal().GetValue(), 48.24, kResultErrorMargin)
             << "Person (one week) total calculated incorrectly";
-  EXPECT_NEAR(portions.at(person_two_weeks).GetUsageTotal(), 43.30, RESULT_ERROR_MARGIN)
+  EXPECT_NEAR(portions.at(person_two_weeks).GetUsageTotal().GetValue(), 43.29, kResultErrorMargin)
             << "Person (two weeks) usage calculated incorrectly";
-  EXPECT_NEAR(portions.at(person_two_weeks).GetGeneralTotal(), 21.36, RESULT_ERROR_MARGIN)
+  EXPECT_NEAR(portions.at(person_two_weeks).GetGeneralTotal().GetValue(), 21.36, kResultErrorMargin)
             << "Person (two weeks) general calculated incorrectly";
-  EXPECT_NEAR(portions.at(person_two_weeks).GetTotal(), 64.65, RESULT_ERROR_MARGIN)
+  EXPECT_NEAR(portions.at(person_two_weeks).GetTotal().GetValue(), 64.65, kResultErrorMargin)
             << "Person (two weeks) total calculated incorrectly";
-  EXPECT_NEAR(portions.at(person_absent).GetUsageTotal(), 14.58, RESULT_ERROR_MARGIN)
+  EXPECT_NEAR(portions.at(person_absent).GetUsageTotal().GetValue(), 14.58, kResultErrorMargin)
             << "Person (absent) usage calculated incorrectly";
-  EXPECT_NEAR(portions.at(person_absent).GetGeneralTotal(), 21.36, RESULT_ERROR_MARGIN)
+  EXPECT_NEAR(portions.at(person_absent).GetGeneralTotal().GetValue(), 21.36, kResultErrorMargin)
             << "Person (absent) general calculated incorrectly";
-  EXPECT_NEAR(portions.at(person_absent).GetTotal(), 35.94, RESULT_ERROR_MARGIN)
+  EXPECT_NEAR(portions.at(person_absent).GetTotal().GetValue(), 35.94, kResultErrorMargin)
             << "Person (absent) total calculated incorrectly";
 }
 
 TEST_F(BillTest, IsValid) {
-  splitbill::ValidationError error;
+  ValidationError error;
 
   // Lines add up
-  bill_.SetTotalAmount(148.84);
+  bill_.SetTotalAmount(Money(148.83, Currency::Code::USD));
   EXPECT_TRUE(bill_.IsValid(error));
-  EXPECT_EQ(error, splitbill::ValidationError::kValid);
+  EXPECT_EQ(error, ValidationError::kValid);
 
   // Lines don't add up
-  bill_.SetTotalAmount(150);
+  bill_.SetTotalAmount(Money(150.00, Currency::Code::USD));
   EXPECT_FALSE(bill_.IsValid(error));
-  EXPECT_EQ(error, splitbill::ValidationError::kLineSumNotTotal);
-}
-
+  EXPECT_EQ(error, ValidationError::kLineSumNotTotal);
 }

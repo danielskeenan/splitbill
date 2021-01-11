@@ -13,10 +13,9 @@
 #include <algorithm>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/multiprecision/cpp_dec_float.hpp>
+#include "Money.h"
 
 namespace splitbill {
-
-typedef boost::multiprecision::cpp_dec_float_50 Money;
 
 /**
  * Bill Line
@@ -24,11 +23,12 @@ typedef boost::multiprecision::cpp_dec_float_50 Money;
 struct BillLine {
   std::string name;
   std::string description;
-  Money tax_rate = 0;
-  Money amount = 0;
+  double tax_rate = 0;
+  Money amount = Money(0, Currency::Code::USD);
   bool split = true;
 
-  BillLine() = default;
+  explicit BillLine() = default;
+
   BillLine(const BillLine &other) = default;
 
   bool operator==(const BillLine &rhs) const {
@@ -49,20 +49,14 @@ struct BillLine {
  */
 class SplitBill {
  public:
-  SplitBill(const Money &usage_total, const Money &general_total)
-      : usageTotal_(usage_total), generalTotal_(general_total) {}
+  SplitBill(const Money &usage_total, Money general_total)
+      : usageTotal_(usage_total), generalTotal_(std::move(general_total)) {}
 
-  [[nodiscard]] const Money &GetMoneyUsageTotal() const { return usageTotal_; }
+  [[nodiscard]] const Money &GetUsageTotal() const { return usageTotal_; }
 
-  [[nodiscard]] double GetUsageTotal() const { return GetMoneyUsageTotal().convert_to<double>(); }
+  [[nodiscard]] const Money &GetGeneralTotal() const { return generalTotal_; }
 
-  [[nodiscard]] const Money &GetMoneyGeneralTotal() const { return generalTotal_; }
-
-  [[nodiscard]] double GetGeneralTotal() const { return GetMoneyGeneralTotal().convert_to<double>(); }
-
-  [[nodiscard]] Money GetMoneyTotal() const { return GetMoneyUsageTotal() + GetMoneyGeneralTotal(); }
-
-  [[nodiscard]] double GetTotal() const { return GetMoneyTotal().convert_to<double>(); }
+  [[nodiscard]] Money GetTotal() const { return GetUsageTotal() + GetGeneralTotal(); }
 
  private:
   const Money usageTotal_;
@@ -74,10 +68,10 @@ class SplitBill {
  */
 class BillPortion : public SplitBill {
  public:
-  explicit BillPortion(const std::string &name, const Money &usage_total, const Money &general_total) :
-      SplitBill(usage_total, general_total), name_(name) {}
+  explicit BillPortion(std::string name, const Money &usage_total, const Money &general_total) :
+      SplitBill(usage_total, general_total), name_(std::move(name)) {}
 
-  [[nodiscard]] const std::string GetName() const { return name_; }
+  [[nodiscard]] const std::string &GetName() const { return name_; }
 
  private:
   std::string name_;
@@ -100,8 +94,8 @@ class PersonPeriod {
    * @param name
    * @param period
    */
-  explicit PersonPeriod(const std::string &name, const boost::gregorian::date_period &period) :
-      name_(name), period_(period) {}
+  explicit PersonPeriod(std::string name, const boost::gregorian::date_period &period) :
+      name_(std::move(name)), period_(period) {}
 
   /**
    * Create a new PersonPeriod for <name> present from <start> to <end>, inclusive.
@@ -198,19 +192,11 @@ class Bill {
    */
   bool IsValid(ValidationError &error);
 
-  [[nodiscard]] const Money &GetTotalMoneyAmount() const {
+  [[nodiscard]] const Money &GetTotalAmount() const {
     return total_amount_;
   }
 
-  [[nodiscard]] double GetTotalAmount() const {
-    return total_amount_.convert_to<double>();
-  }
-
-  void SetTotalMoneyAmount(const Money &total_amount) {
-    total_amount_ = total_amount;
-  }
-
-  void SetTotalAmount(const double &total_amount) {
+  void SetTotalAmount(const Money &total_amount) {
     total_amount_ = total_amount;
   }
 
@@ -248,6 +234,7 @@ class Bill {
 
  private:
   Money total_amount_;
+  Currency currency_;
   std::vector<BillLine> lines_;
 
   static std::vector<Money> GetAmounts(const std::vector<BillLine> &lines);
@@ -255,7 +242,6 @@ class Bill {
   static void SortLinesBySplit(const std::vector<BillLine> &lines,
                                std::vector<BillLine> &split_lines,
                                std::vector<BillLine> &not_split_lines);
-  static Money Accumulate(const std::vector<Money> &items);
 };
 
 } // splitbill

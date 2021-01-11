@@ -53,6 +53,7 @@ def generate(currency_info: Dict[str, CurrencyInfo]) -> str:
 #ifndef SPLITBILL_INCLUDE_LIB_CURRENCY_H
 #define SPLITBILL_INCLUDE_LIB_CURRENCY_H
 
+#include <cmath>
 #include <string>
 #include <unordered_map>
 
@@ -63,7 +64,14 @@ class Currency {
   struct Info {
     std::string iso_4217_code;
     unsigned int minor_units;
-    unsigned int multiplier;
+    
+    [[nodiscard]] unsigned int multiplier() const {
+      return std::pow(10, minor_units);
+    }
+    
+    [[nodiscard]] double error_margin() const {
+      return 1.0 / std::pow(10, minor_units + 1);
+    }
 
     [[nodiscard]] bool operator==(const Info &rhs) const {
       return iso_4217_code == rhs.iso_4217_code;
@@ -103,8 +111,8 @@ class Currency {
     currency_code_enums = (',' + os.linesep + (' ' * 4)).join(currency_info.keys())
     currency_info_members = (',' + os.linesep + (' ' * 6)).join(
         [
-            '{{Code::{code}, {{"{code}", {minor_units}, {multiplier}}}}}'.format(
-                code=currency.iso_4217_code, minor_units=currency.minor_units, multiplier=(10 ** currency.minor_units))
+            '{{Code::{code}, {{"{code}", {minor_units}}}}}'.format(
+                code=currency.iso_4217_code, minor_units=currency.minor_units)
             for currency in currency_info.values()
         ]
     )
