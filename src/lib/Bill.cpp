@@ -13,7 +13,7 @@ namespace splitbill {
 SplitBill Bill::Total() {
   if (lines_.empty()) {
     // Empty bill
-    return SplitBill(Money(0, total_amount_.GetCurrency()), Money(0, total_amount_.GetCurrency()));
+    return SplitBill(Money(0, GetCurrency()), Money(0, GetCurrency()));
   }
 
   // Get the lines that refer to usage and those that don't.
@@ -24,12 +24,12 @@ SplitBill Bill::Total() {
   // Sanity check to ensure there's something to work with for the rest of the process.
   // These lines have amount and tax rate 0 so they won't affect calculations
   if (usage_lines.empty()) {
-    BillLine dummy_usage;
+    BillLine dummy_usage(GetCurrency());
     dummy_usage.split = true;
     usage_lines.push_back(dummy_usage);
   }
   if (general_lines.empty()) {
-    BillLine dummy_general;
+    BillLine dummy_general(GetCurrency());
     dummy_general.split = false;
     general_lines.push_back(dummy_general);
   }
@@ -44,11 +44,11 @@ SplitBill Bill::Total() {
   const std::vector<Money> usage_amounts = GetAmounts(usage_lines);
   const std::vector<Money> general_amounts = GetAmounts(general_lines);
   const Money all_total =
-      std::accumulate(all_amounts.cbegin(), all_amounts.cend(), Money(0, total_amount_.GetCurrency()));
+      std::accumulate(all_amounts.cbegin(), all_amounts.cend(), Money(0, GetCurrency()));
   const Money usage_total =
-      std::accumulate(usage_amounts.cbegin(), usage_amounts.cend(), Money(0, total_amount_.GetCurrency()));
+      std::accumulate(usage_amounts.cbegin(), usage_amounts.cend(), Money(0, GetCurrency()));
   const Money general_total =
-      std::accumulate(general_amounts.cbegin(), general_amounts.cend(), Money(0, total_amount_.GetCurrency()));
+      std::accumulate(general_amounts.cbegin(), general_amounts.cend(), Money(0, GetCurrency()));
 
   return SplitBill(usage_total, general_total);
 }
@@ -119,7 +119,7 @@ std::vector<splitbill::BillPortion> Bill::Split(const boost::gregorian::date_per
 bool Bill::IsValid(ValidationError &error) {
   // Check line total equals bill total, with tax applied
   SplitBill totals = Total();
-  if (std::abs((totals.GetTotal() - GetTotalAmount()).GetValue()) >= total_amount_.GetCurrency().error_margin()) {
+  if (std::abs((totals.GetTotal() - GetTotalAmount()).GetValue()) >= GetCurrency().error_margin()) {
     error = ValidationError::kLineSumNotTotal;
     return false;
   }

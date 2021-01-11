@@ -24,10 +24,17 @@ struct BillLine {
   std::string name;
   std::string description;
   double tax_rate = 0;
-  Money amount = Money(0, Currency::Code::USD);
+  Money amount;
   bool split = true;
 
-  explicit BillLine() = default;
+  explicit BillLine(const Currency::Info &currency) :
+      amount(0, currency) {}
+
+  explicit BillLine(Currency::Code currency) :
+      amount(0, currency) {}
+
+  explicit BillLine(const std::string &currency) :
+      amount(0, currency) {}
 
   BillLine(const BillLine &other) = default;
 
@@ -148,12 +155,21 @@ enum class ValidationError {
  */
 class Bill {
  public:
+  explicit Bill(const Currency::Info &currency) :
+      total_amount_(0, currency) {}
+
+  explicit Bill(Currency::Code currency) :
+      total_amount_(0, currency) {}
+
+  explicit Bill(const std::string &currency) :
+      total_amount_(0, currency) {}
+
   /**
    * Tote the bill
    *
    * @return
    */
-  SplitBill Total();
+  [[nodiscard]] SplitBill Total();
 
   /**
    * Split the bill according to period.
@@ -162,9 +178,9 @@ class Bill {
    * @param people
    * @return
    */
-  std::vector<splitbill::BillPortion> Split(const boost::gregorian::date_period &period,
-                                            const std::vector<PersonPeriod> &person_periods,
-                                            const std::vector<std::string> &people);
+  [[nodiscard]] std::vector<splitbill::BillPortion> Split(const boost::gregorian::date_period &period,
+                                                          const std::vector<PersonPeriod> &person_periods,
+                                                          const std::vector<std::string> &people);
 
   /**
    * Split the bill according to period.
@@ -173,10 +189,10 @@ class Bill {
    * @param people
    * @return
    */
-  std::vector<splitbill::BillPortion> Split(const std::string &start,
-                                            const std::string &end,
-                                            const std::vector<PersonPeriod> &person_periods,
-                                            const std::vector<std::string> &people) {
+  [[nodiscard]] std::vector<splitbill::BillPortion> Split(const std::string &start,
+                                                          const std::string &end,
+                                                          const std::vector<PersonPeriod> &person_periods,
+                                                          const std::vector<std::string> &people) {
     const boost::date_time::period<boost::gregorian::date, boost::gregorian::date_duration>
         period(boost::gregorian::from_string(start),
                boost::gregorian::from_string(end) + boost::gregorian::date_duration(1));
@@ -190,7 +206,11 @@ class Bill {
    * @param error
    * @return
    */
-  bool IsValid(ValidationError &error);
+  [[nodiscard]] bool IsValid(ValidationError &error);
+
+  [[nodiscard]] const Currency::Info &GetCurrency() const {
+    return total_amount_.GetCurrency();
+  }
 
   [[nodiscard]] const Money &GetTotalAmount() const {
     return total_amount_;
@@ -234,7 +254,6 @@ class Bill {
 
  private:
   Money total_amount_;
-  Currency currency_;
   std::vector<BillLine> lines_;
 
   static std::vector<Money> GetAmounts(const std::vector<BillLine> &lines);

@@ -47,23 +47,23 @@ class BillTest : public ::testing::Test {
     bill_.AddLine(line_split_untaxed_);
   }
 
-  BillLine line_unsplit_taxed_;
-  BillLine line_unsplit_untaxed_;
-  BillLine line_split_taxed_;
-  BillLine line_split_untaxed_;
+  BillLine line_unsplit_taxed_ = BillLine(Currency::Code::USD);
+  BillLine line_unsplit_untaxed_ = BillLine(Currency::Code::USD);
+  BillLine line_split_taxed_ = BillLine(Currency::Code::USD);
+  BillLine line_split_untaxed_ = BillLine(Currency::Code::USD);
 
-  Bill bill_;
+  Bill bill_ = Bill(Currency::Code::USD);
 };
 
 /**
  * Lines are added properly
  */
 TEST_F(BillTest, LinesAdded) {
-  Bill bill;
+  Bill bill(Currency::Code::USD);
 
   ASSERT_EQ(bill.GetLines().size(), 0) << "New bill is not empty";
   for (unsigned int i = 0; i < 3; i++) {
-    BillLine line;
+    BillLine line(Currency::Code::USD);
     line.name = "Test Line" + std::to_string(i);
     bill.AddLine(line);
     ASSERT_EQ(bill.GetLines().size(), i + 1) << "Bill line not added";
@@ -75,16 +75,16 @@ TEST_F(BillTest, LinesAdded) {
  * Lines are removed preserving order
  */
 TEST_F(BillTest, LinesRemoved) {
-  Bill bill;
+  Bill bill(Currency::Code::USD);
 
   // Add lines
-  BillLine line_1;
+  BillLine line_1(Currency::Code::USD);
   line_1.name = "Test Line 1";;
   bill.AddLine(line_1);
-  BillLine line_2;
+  BillLine line_2(Currency::Code::USD);
   line_2.name = "Test Line 2";;
   bill.AddLine(line_2);
-  BillLine line_3;
+  BillLine line_3(Currency::Code::USD);
   line_3.name = "Test Line 3";;
   bill.AddLine(line_3);
 
@@ -98,18 +98,18 @@ TEST_F(BillTest, LinesRemoved) {
  * Lines are updated properly
  */
 TEST_F(BillTest, LinesUpdated) {
-  Bill bill;
+  Bill bill(Currency::Code::USD);
 
   // Add lines
-  BillLine line_1;
+  BillLine line_1(Currency::Code::USD);
   line_1.name = "Test Line 1";;
   line_1.amount = Money(51.00, Currency::Code::USD);
   bill.AddLine(line_1);
-  BillLine line_2;
+  BillLine line_2(Currency::Code::USD);
   line_2.name = "Test Line 2";;
   line_2.amount = Money(52.00, Currency::Code::USD);
   bill.AddLine(line_2);
-  BillLine line_3;
+  BillLine line_3(Currency::Code::USD);
   line_3.name = "Test Line 3";;
   line_3.amount = Money(53.00, Currency::Code::USD);
   bill.AddLine(line_3);

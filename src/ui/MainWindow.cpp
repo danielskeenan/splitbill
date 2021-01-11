@@ -25,7 +25,9 @@
 namespace splitbill::ui {
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent), bill_(new Bill), people_(new QVector<PersonPeriod>) {
+    QMainWindow(parent),
+    bill_(new Bill(QLocale().currencySymbol(QLocale::CurrencyIsoCode).toStdString())),
+    people_(new QVector<PersonPeriod>) {
   InitUi();
   InitMenu();
 }
@@ -259,11 +261,11 @@ void MainWindow::SRemovePerson() {
 
 void MainWindow::SUpdateLineTotal() {
   const SplitBill totals = bill_->Total();
-  widgets_.billLineTotalLabel->setText(QLocale().toCurrencyString(totals.GetTotal()));
+  widgets_.billLineTotalLabel->setText(QLocale().toCurrencyString(totals.GetTotal().GetValue()));
 }
 
 void MainWindow::SUpdateBillTotal(double val) {
-  bill_->SetTotalAmount(val);
+  bill_->SetTotalAmount(Money(val, bill_->GetTotalAmount().GetCurrency()));
   SUpdateBillValidation();
   SUpdateSplit();
 }

@@ -67,9 +67,9 @@ QVariant BillLineModel::data(const QModelIndex &index, int role) const {
     } else if (column == Column::kDescription) {
       return QString::fromStdString(line.description);
     } else if (column == Column::kAmount) {
-      return QLocale().toCurrencyString(line.amount.convert_to<double>());
+      return QLocale().toCurrencyString(line.amount.GetValue());
     } else if (column == Column::kTaxRate) {
-      return QLocale().toString(line.tax_rate.convert_to<double>() * 100, 'f', 3) + QLocale().percent();
+      return QLocale().toString(line.tax_rate, 'f', 3) + QLocale().percent();
     } else if (column == Column::kIsSplit) {
       //: Bill line usage
       return line.split ? tr("Yes") : tr("No");
@@ -84,9 +84,9 @@ QVariant BillLineModel::data(const QModelIndex &index, int role) const {
     } else if (column == Column::kDescription) {
       return QString::fromStdString(line.description);
     } else if (column == Column::kAmount) {
-      return line.amount.convert_to<double>();
+      return line.amount.GetValue();
     } else if (column == Column::kTaxRate) {
-      return line.tax_rate.convert_to<double>();
+      return line.tax_rate;
     } else if (column == Column::kIsSplit) {
       return line.split;
     }
@@ -108,7 +108,7 @@ bool BillLineModel::setData(const QModelIndex &index, const QVariant &value, int
       line.description = value.toString().toStdString();
       success = true;
     } else if (column == Column::kAmount) {
-      line.amount = value.toDouble(&success);
+      line.amount = Money(value.toDouble(&success), QLocale().currencySymbol(QLocale::CurrencyIsoCode).toStdString());
     } else if (column == Column::kTaxRate) {
       line.tax_rate = value.toDouble(&success);
     } else if (column == Column::kIsSplit) {
@@ -140,7 +140,7 @@ void BillLineModel::AddLine(const BillLine &line) {
 
 void BillLineModel::AddLine(const QModelIndex &index) {
   const QModelIndex parent;
-  BillLine line;
+  BillLine line(QLocale().currencySymbol(QLocale::CurrencyIsoCode).toStdString());
   line.tax_rate = Settings::GetDefaultTaxRate();
 
   if (index.isValid()) {

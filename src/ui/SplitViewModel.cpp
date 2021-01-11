@@ -32,7 +32,7 @@ QVariant SplitViewModel::data(const QModelIndex &index, int role) const {
     if (column == Column::kName) {
       return QString::fromStdString(portion.GetName());
     } else if (column == Column::kTotal) {
-      return QLocale().toCurrencyString(portion.GetTotal());
+      return QLocale().toCurrencyString(portion.GetTotal().GetValue());
     }
   }
 
