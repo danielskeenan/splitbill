@@ -10,8 +10,8 @@ Windows
 .. csv-table::
    :header: "Download", "MD5", "Checksum"
 
-   `Installer <_static/splitbill-0.1.0-win64.exe>`_,`MD5 Checksum <_static/splitbill-0.1.0-win64.exe.md5>`_,53ad2063100b3e8cdaee8685dbd7d251
-   `ZIP Archive <_static/splitbill-0.1.0-win64.zip>`_,`MD5 Checksum <_static/splitbill-0.1.0-win64.zip.md5>`_,4ba8a5b89413d4890664ca89b1ef1395
+   `Installer <_static/splitbill-0.1.0-win64.exe>`_,`MD5 Checksum <_static/splitbill-0.1.0-win64.exe.md5>`_,0a9938289d95852a653f1bbaf3fdb063
+   `ZIP Archive <_static/splitbill-0.1.0-win64.zip>`_,`MD5 Checksum <_static/splitbill-0.1.0-win64.zip.md5>`_,b9607b5854827fd28ebb0ee896995b17
 
 Mac OS
 ------
@@ -19,8 +19,8 @@ Mac OS
 .. csv-table::
    :header: "Download", "MD5", "Checksum"
 
-   `Disk Image <_static/splitbill-0.1.0-Darwin.dmg>`_,`MD5 Checksum <_static/splitbill-0.1.0-Darwin.dmg.md5>`_,33446187c1b089cd65e99dc0de33fc7a
-   `ZIP Archive <_static/splitbill-0.1.0-Darwin.zip>`_,`MD5 Checksum <_static/splitbill-0.1.0-Darwin.zip.md5>`_,92f5fe4941bcea4906bea1df2df05558
+   `Disk Image <_static/splitbill-0.1.0-Darwin.dmg>`_,`MD5 Checksum <_static/splitbill-0.1.0-Darwin.dmg.md5>`_,cd9f0602945bab085b730cbdc9029273
+   `ZIP Archive <_static/splitbill-0.1.0-Darwin.zip>`_,`MD5 Checksum <_static/splitbill-0.1.0-Darwin.zip.md5>`_,d4bd4d467cdbdfaa87e3c57f9b974026
 
 Linux
 -----
@@ -28,6 +28,6 @@ Linux
 .. csv-table::
    :header: "Download", "MD5", "Checksum"
 
-   `Ubuntu Debian Package <_static/splitbill-0.1.0-Linux.deb>`_,`MD5 Checksum <_static/splitbill-0.1.0-Linux.deb.md5>`_,a7b2a81f1dd76ae134caa631cdedf323
-   `Tarball (GZip compressed) <_static/splitbill-0.1.0-Linux.tar.gz>`_,`MD5 Checksum <_static/splitbill-0.1.0-Linux.tar.gz.md5>`_,db92f99bf873e965cb57a86e991986a3
-   `Tarball (BZip2 compressed) <_static/splitbill-0.1.0-Linux.tar.bz2>`_,`MD5 Checksum <_static/splitbill-0.1.0-Linux.tar.bz2.md5>`_,8f61b809d4da5f702ff1d824ab90e950
+   `Ubuntu Debian Package <_static/splitbill-0.1.0-Linux.deb>`_,`MD5 Checksum <_static/splitbill-0.1.0-Linux.deb.md5>`_,94eee654ffa3ba3c4a6ad9e43c197736
+   `Tarball (GZip compressed) <_static/splitbill-0.1.0-Linux.tar.gz>`_,`MD5 Checksum <_static/splitbill-0.1.0-Linux.tar.gz.md5>`_,ecf7264215681a55ca30d593ddcb141b
+   `Tarball (BZip2 compressed) <_static/splitbill-0.1.0-Linux.tar.bz2>`_,`MD5 Checksum <_static/splitbill-0.1.0-Linux.tar.bz2.md5>`_,188f91831c1f62a95eb3afc44ce9fbe5
