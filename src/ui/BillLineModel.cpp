@@ -69,7 +69,7 @@ QVariant BillLineModel::data(const QModelIndex &index, int role) const {
     } else if (column == Column::kAmount) {
       return QLocale().toCurrencyString(line.amount.GetValue());
     } else if (column == Column::kTaxRate) {
-      return QLocale().toString(line.tax_rate, 'f', 3) + QLocale().percent();
+      return QLocale().toString(line.tax_rate * 100, 'f', 3) + QLocale().percent();
     } else if (column == Column::kIsSplit) {
       //: Bill line usage
       return line.split ? tr("Yes") : tr("No");

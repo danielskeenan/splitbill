@@ -1,7 +1,7 @@
 # Qt
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
-find_package(Qt5 COMPONENTS Widgets REQUIRED)
+find_package(Qt6 COMPONENTS Widgets REQUIRED)
 
 add_executable(splitbill WIN32 MACOSX_BUNDLE
     main.cpp
@@ -24,11 +24,6 @@ add_executable(splitbill WIN32 MACOSX_BUNDLE
     SplitViewModel.cpp
     )
 
-if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-    find_package(BreezeIcons REQUIRED)
-    target_sources(splitbill PRIVATE ${BreezeIcons_RES_DIRS}/breeze-icons.qrc)
-endif ()
-
 set_target_properties(splitbill PROPERTIES
     MACOSX_BUNDLE_BUNDLE_NAME splitbill
     MACOSX_BUNDLE_BUNDLE_VERSION ${CMAKE_PROJECT_VERSION}
@@ -37,8 +32,8 @@ set_target_properties(splitbill PROPERTIES
     MACOSX_BUNDLE_LONG_VERSION_STRING ${CMAKE_PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${CMAKE_PROJECT_VERSION})
 
-find_package(QSettingsContainer REQUIRED)
-target_link_libraries(splitbill PUBLIC splitbill_lib QSettingsContainer::QSettingsContainer Qt5::Widgets)
+include(${PROJECT_SOURCE_DIR}/cmake/qsettingscontainer.cmake)
+target_link_libraries(splitbill PUBLIC splitbill_lib QSettingsContainer Qt::Widgets)
 target_compile_definitions(splitbill PUBLIC -DQT_NO_KEYWORDS)
 
 # Qt packaging

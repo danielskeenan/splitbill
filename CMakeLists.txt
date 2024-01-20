@@ -7,8 +7,6 @@ set(PROJECT_AUTHOR "Dan Keenan")
 set(PROJECT_AUTHOR_DOMAIN "org.dankeenan")
 set(CMAKE_CXX_STANDARD 17)
 
-set(CMAKE_MODULE_PATH "${PROJECT_BINARY_DIR}")
-
 set(BUILD_APP On CACHE BOOL "Build program")
 if (BUILD_APP)
     # Platform config

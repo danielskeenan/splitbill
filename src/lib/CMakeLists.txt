@@ -15,7 +15,7 @@ if (NOT EXISTS "${ISO_4217_XML_PATH}")
         set(ISO_4217_XML_PATH "${PROJECT_BINARY_DIR}/resources/iso_4217.xml" CACHE FILEPATH "" FORCE)
     endif ()
     message(STATUS "Downloading ISO 4217 Currency info to ${ISO_4217_XML_PATH}")
-    file(DOWNLOAD "https://www.currency-iso.org/dam/downloads/lists/list_one.xml" "${ISO_4217_XML_PATH}"
+    file(DOWNLOAD "https://www.six-group.com/dam/download/financial-information/data-center/iso-currrency/lists/list-one.xml" "${ISO_4217_XML_PATH}"
         SHOW_PROGRESS
         TLS_VERIFY On
         STATUS _ISO_4217_XML_STATUS

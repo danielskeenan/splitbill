@@ -155,7 +155,8 @@ def get_iso_data() -> ET.ElementTree:
     Download the XML file from the internet.
     :return:
     """
-    with urllib.request.urlopen('https://www.currency-iso.org/dam/downloads/lists/list_one.xml') as r:
+    with urllib.request.urlopen(
+            'https://www.six-group.com/dam/download/financial-information/data-center/iso-currrency/lists/list-one.xml') as r:
         return ET.parse(r)
 
 

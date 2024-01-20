@@ -99,6 +99,7 @@ void SettingsDialog::accept() {
     default_people.append(widgets_.defaultPeople->item(i)->data(Qt::ItemDataRole::DisplayRole).toString());
   }
   Settings::SetDefaultPeople(default_people);
+  QDialog::accept();
 }
 
 } // splitbill::ui
