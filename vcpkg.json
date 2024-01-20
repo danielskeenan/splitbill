@@ -1,0 +1,12 @@
+{
+  "name" : "splitbill",
+  "version-string" : "1.0.0",
+  "builtin-baseline" : "83972272512ce4ede5fc3b2ba98f6468b179f192",
+  "dependencies" : [ {
+    "name" : "boost-date-time",
+    "version>=" : "1.83.0"
+  }, {
+    "name" : "boost-multiprecision",
+    "version>=" : "1.83.0"
+  } ]
+}
