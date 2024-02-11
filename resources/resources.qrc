@@ -5,5 +5,7 @@
         <file alias="good">check-solid.svg</file>
         <file alias="bad">times-solid.svg</file>
         <file alias="find-dollar">search-dollar-solid.svg</file>
+        <file>icons/list-add.svg</file>
+        <file>icons/list-remove.svg</file>
     </qresource>
 </RCC>

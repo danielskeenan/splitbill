@@ -19,10 +19,7 @@ int main(int argc, char *argv[]) {
   translator.load(QLocale(), APP_NAME, "_", ":/i18n");
   app.installTranslator(&translator);
 
-  // Icon theme, for non Linux platforms
-#ifndef PLATFORM_LINUX
-  QIcon::setThemeName("breeze-light");
-#endif
+  QIcon::setFallbackSearchPaths({":/icons"});
 
   // App metadata
   app.setOrganizationName(APP_AUTHOR);
