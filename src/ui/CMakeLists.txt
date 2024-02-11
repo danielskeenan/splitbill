@@ -2,6 +2,7 @@
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 find_package(Qt6 COMPONENTS Widgets REQUIRED)
+find_path(QSETTINGSCONTAINER_INCLUDE_DIRS "QSettingsContainer.h")
 
 add_executable(splitbill WIN32 MACOSX_BUNDLE
     main.cpp
@@ -32,8 +33,8 @@ set_target_properties(splitbill PROPERTIES
     MACOSX_BUNDLE_LONG_VERSION_STRING ${CMAKE_PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${CMAKE_PROJECT_VERSION})
 
-include(${PROJECT_SOURCE_DIR}/cmake/qsettingscontainer.cmake)
-target_link_libraries(splitbill PUBLIC splitbill_lib QSettingsContainer Qt::Widgets)
+target_link_libraries(splitbill PUBLIC splitbill_lib Qt::Widgets)
+target_include_directories(splitbill PRIVATE ${QSETTINGSCONTAINER_INCLUDE_DIRS})
 target_compile_definitions(splitbill PUBLIC -DQT_NO_KEYWORDS)
 
 # Qt packaging

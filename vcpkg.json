@@ -1,12 +1,19 @@
 {
-  "name" : "splitbill",
-  "version-string" : "1.0.0",
-  "builtin-baseline" : "83972272512ce4ede5fc3b2ba98f6468b179f192",
-  "dependencies" : [ {
-    "name" : "boost-date-time",
-    "version>=" : "1.83.0"
-  }, {
-    "name" : "boost-multiprecision",
-    "version>=" : "1.83.0"
-  } ]
+  "name": "splitbill",
+  "version-string": "1.0.0",
+  "builtin-baseline": "345ac44ab8d6a16239d3af55df9608bf725e7a48",
+  "dependencies": [
+    {
+      "name": "boost-date-time",
+      "version>=": "1.83.0"
+    },
+    {
+      "name": "boost-multiprecision",
+      "version>=": "1.83.0"
+    },
+    {
+      "name": "qsettingscontainer",
+      "version>=": "2.0.0"
+    }
+  ]
 }

@@ -12,14 +12,14 @@
 #include <QPoint>
 #include <QSize>
 #include <QtCore/QSettings>
-#include <dragoonboots/qsettingscontainer/QSettingsContainer.h>
+#include <QSettingsContainer.h>
 
 namespace splitbill::ui {
 
 /**
  * Program settings container
  */
-class Settings : public dragoonboots::qsettingscontainer::QSettingsContainer {
+class Settings : public qsettingscontainer::QSettingsContainer {
  public:
   DGSETTINGS_SETTING(QByteArray, MainWindowGeometry, {})
 

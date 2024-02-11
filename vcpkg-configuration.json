@@ -1,0 +1,12 @@
+{
+  "registries": [
+    {
+      "kind": "git",
+      "baseline": "837408b778306c154c6ee9d1bd82f57fbfb3d06b",
+      "repository": "https://github.com/danielskeenan/dsk-vcpkg",
+      "packages": [
+        "qsettingscontainer"
+      ]
+    }
+  ]
+}
