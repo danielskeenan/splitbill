@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.26)
 project(splitbill
     VERSION 0.1.0
     DESCRIPTION "Split bills among several people fairly")
