@@ -67,7 +67,7 @@ jobs:
         if: ${{runner.os == 'Linux'}}
         run: |
           sudo apt-get update
-          sudo apt-get -y install pandoc qt6-base-dev
+          sudo apt-get -y install pandoc qt6-base-dev libglx-dev
       - name: Install Qt
         # Don't need this on Linux, as Qt will come from the system package manager above
         if: ${{runner.os != 'Linux'}}

@@ -9,6 +9,10 @@ set(CMAKE_CXX_STANDARD 17)
 
 set(BUILD_APP On CACHE BOOL "Build program")
 if (BUILD_APP)
+    set(CMAKE_AUTOMOC ON)
+    set(CMAKE_AUTORCC ON)
+    set(CMAKE_AUTOUIC ON)
+
     # Platform config
     # This is more portable across compilers compared to other methods
     if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
@@ -20,6 +24,15 @@ if (BUILD_APP)
     endif ()
 
     include_directories(${PROJECT_SOURCE_DIR}/include)
+
+    find_package(Qt6 COMPONENTS
+        Core
+        Svg
+        Widgets
+        REQUIRED
+    )
+    qt_standard_project_setup()
+
     add_subdirectory(src)
     add_subdirectory(resources)
 
