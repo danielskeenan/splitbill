@@ -10,8 +10,8 @@ Windows
 .. csv-table::
    :header: "Download", "MD5", "Checksum"
 
-   `Installer <_static/splitbill-0.1.0-win64.exe>`_,`MD5 Checksum <_static/splitbill-0.1.0-win64.exe.md5>`_,No hash available
-   `ZIP Archive <_static/splitbill-0.1.0-win64.zip>`_,`MD5 Checksum <_static/splitbill-0.1.0-win64.zip.md5>`_,No hash available
+   `Installer <_static/splitbill-0.1.1-win64.exe>`_,`MD5 Checksum <_static/splitbill-0.1.1-win64.exe.md5>`_,No hash available
+   `ZIP Archive <_static/splitbill-0.1.1-win64.zip>`_,`MD5 Checksum <_static/splitbill-0.1.1-win64.zip.md5>`_,No hash available
 
 Mac OS
 ------
@@ -19,8 +19,8 @@ Mac OS
 .. csv-table::
    :header: "Download", "MD5", "Checksum"
 
-   `Disk Image <_static/splitbill-0.1.0-Darwin.dmg>`_,`MD5 Checksum <_static/splitbill-0.1.0-Darwin.dmg.md5>`_,No hash available
-   `ZIP Archive <_static/splitbill-0.1.0-Darwin.zip>`_,`MD5 Checksum <_static/splitbill-0.1.0-Darwin.zip.md5>`_,No hash available
+   `Disk Image <_static/splitbill-0.1.1-Darwin.dmg>`_,`MD5 Checksum <_static/splitbill-0.1.1-Darwin.dmg.md5>`_,No hash available
+   `ZIP Archive <_static/splitbill-0.1.1-Darwin.zip>`_,`MD5 Checksum <_static/splitbill-0.1.1-Darwin.zip.md5>`_,No hash available
 
 Linux
 -----
@@ -28,6 +28,6 @@ Linux
 .. csv-table::
    :header: "Download", "MD5", "Checksum"
 
-   `Ubuntu Debian Package <_static/splitbill-0.1.0-Linux.deb>`_,`MD5 Checksum <_static/splitbill-0.1.0-Linux.deb.md5>`_,No hash available
-   `Tarball (GZip compressed) <_static/splitbill-0.1.0-Linux.tar.gz>`_,`MD5 Checksum <_static/splitbill-0.1.0-Linux.tar.gz.md5>`_,No hash available
-   `Tarball (BZip2 compressed) <_static/splitbill-0.1.0-Linux.tar.bz2>`_,`MD5 Checksum <_static/splitbill-0.1.0-Linux.tar.bz2.md5>`_,No hash available
+   `Ubuntu Debian Package <_static/splitbill-0.1.1-Linux.deb>`_,`MD5 Checksum <_static/splitbill-0.1.1-Linux.deb.md5>`_,No hash available
+   `Tarball (GZip compressed) <_static/splitbill-0.1.1-Linux.tar.gz>`_,`MD5 Checksum <_static/splitbill-0.1.1-Linux.tar.gz.md5>`_,No hash available
+   `Tarball (BZip2 compressed) <_static/splitbill-0.1.1-Linux.tar.bz2>`_,`MD5 Checksum <_static/splitbill-0.1.1-Linux.tar.bz2.md5>`_,No hash available
