@@ -143,7 +143,7 @@ jobs:
         uses: actions/download-artifact@v4
         id: download
         with:
-          path: "${BUILD_DIR}/packages"
+          path: ${{env.BUILD_DIR}}/packages
           pattern: packages_*
           merge-multiple: true
       - name: Configure CMake
