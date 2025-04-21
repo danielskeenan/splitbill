@@ -17,11 +17,12 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - macos-latest
+          # TODO: When runners fix vcpkg, include macos again.
+          # - macos-latest
           - windows-latest
           - ubuntu-latest
         include:
-          - os: macos-latest
+          # - os: macos-latest
           - os: windows-latest
           - os: ubuntu-latest
     runs-on: ${{matrix.os}}
