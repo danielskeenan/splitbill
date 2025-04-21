@@ -9,7 +9,7 @@ env:
   BUILD_TYPE: Release
   SOURCE_DIR: ${{github.workspace}}
   BUILD_DIR: ${{github.workspace}}/build
-  QT_VERSION: 6.6.*
+  QT_VERSION: 6.8.*
 
 jobs:
   build:
@@ -75,7 +75,7 @@ jobs:
       - name: Install Qt
         # Don't need this on Linux, as Qt will come from the system package manager above
         if: ${{runner.os != 'Linux'}}
-        uses: jurplel/install-qt-action@v3
+        uses: jurplel/install-qt-action@v4
         with:
           dir: ${{github.workspace}}/.qt
           version: ${{env.QT_VERSION}}
@@ -119,10 +119,10 @@ jobs:
         shell: bash
         run: cpack -G "TGZ;TBZ2;DEB" -B "${BUILD_DIR}/packages"
       - name: Upload packages
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
-          name: packages
-          path: ${{env.BUILD_DIR}}/packages/splitbill-*.*
+          name: packages_${{runner.os}}
+          path: ${{env.BUILD_DIR}}/packages/*.*
           if-no-files-found: error
 
   pages:
@@ -131,28 +131,30 @@ jobs:
     needs:
       - build
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Create Build Environment
         run: mkdir "${BUILD_DIR}"
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: '3.x'
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip setuptools wheel
           pip install sphinx
-      - name: Download built packages
-        uses: actions/download-artifact@v2
+      - name: Get built packages
+        uses: actions/download-artifact@v4
+        id: download
         with:
-          name: packages
-          path: ${{env.BUILD_DIR}}/packages
+          path: packages
+          pattern: packages_*
+          merge-multiple: true
       - name: Configure CMake
         run: cmake -S "${SOURCE_DIR}" -B "${BUILD_DIR}" -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DBUILD_APP=Off -DBUILD_DOC=On -DDOC_OUTPUT_DIR="${{github.workspace}}/public"
       - name: Build
         run: cmake --build "${BUILD_DIR}" --config ${BUILD_TYPE} --target doc
       - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ${{github.workspace}}/public
