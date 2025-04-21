@@ -10,8 +10,8 @@ Windows
 .. csv-table::
    :header: "Download", "MD5", "Checksum"
 
-   `Installer <_static/splitbill-0.1.1-win64.exe>`_,`MD5 Checksum <_static/splitbill-0.1.1-win64.exe.md5>`_,No hash available
-   `ZIP Archive <_static/splitbill-0.1.1-win64.zip>`_,`MD5 Checksum <_static/splitbill-0.1.1-win64.zip.md5>`_,No hash available
+   `Installer <_static/splitbill-0.1.1-win64.exe>`_,`MD5 Checksum <_static/splitbill-0.1.1-win64.exe.md5>`_,c37d0a6ad4d2ac22646b76eed8527a28
+   `ZIP Archive <_static/splitbill-0.1.1-win64.zip>`_,`MD5 Checksum <_static/splitbill-0.1.1-win64.zip.md5>`_,f48e876a829d4aa49a8d61f7da6b2568
 
 Mac OS
 ------
@@ -28,6 +28,6 @@ Linux
 .. csv-table::
    :header: "Download", "MD5", "Checksum"
 
-   `Ubuntu Debian Package <_static/splitbill-0.1.1-Linux.deb>`_,`MD5 Checksum <_static/splitbill-0.1.1-Linux.deb.md5>`_,No hash available
-   `Tarball (GZip compressed) <_static/splitbill-0.1.1-Linux.tar.gz>`_,`MD5 Checksum <_static/splitbill-0.1.1-Linux.tar.gz.md5>`_,No hash available
-   `Tarball (BZip2 compressed) <_static/splitbill-0.1.1-Linux.tar.bz2>`_,`MD5 Checksum <_static/splitbill-0.1.1-Linux.tar.bz2.md5>`_,No hash available
+   `Ubuntu Debian Package <_static/splitbill-0.1.1-Linux.deb>`_,`MD5 Checksum <_static/splitbill-0.1.1-Linux.deb.md5>`_,bcd2247535fd0a77e180f9fe95a65f7d
+   `Tarball (GZip compressed) <_static/splitbill-0.1.1-Linux.tar.gz>`_,`MD5 Checksum <_static/splitbill-0.1.1-Linux.tar.gz.md5>`_,23bcc6f7ccf86fc64476fcd2f311bd69
+   `Tarball (BZip2 compressed) <_static/splitbill-0.1.1-Linux.tar.bz2>`_,`MD5 Checksum <_static/splitbill-0.1.1-Linux.tar.bz2.md5>`_,f3943ab25615e272c3f129dea326caf0
