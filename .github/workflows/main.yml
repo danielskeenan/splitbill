@@ -118,7 +118,7 @@ jobs:
         if: ${{runner.os == 'Linux'}}
         working-directory: ${{env.BUILD_DIR}}
         shell: bash
-        run: cpack -G "TGZ;TBZ2;DEB" -B "${BUILD_DIR}/packages"
+        run: cpack -G "TGZ;DEB;RPM" -B "${BUILD_DIR}/packages"
       - name: Upload packages
         uses: actions/upload-artifact@v4
         with:

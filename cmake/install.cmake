@@ -1,7 +1,7 @@
 set(CPACK_PACKAGE_VENDOR "${PROJECT_AUTHOR}")
 set(CPACK_PACKAGE_CONTACT "${PROJECT_AUTHOR} <dk@dankeenan.org>")
 #set(CPACK_PACKAGE_ICON "${PROJECT_SOURCE_DIR}/resources/app-icon.svg")
-set(CPACK_PACKAGE_CHECKSUM "MD5")
+set(CPACK_PACKAGE_CHECKSUM "SHA256")
 include("${CMAKE_CURRENT_LIST_DIR}/license.cmake")
 set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_BINARY_DIR}/LICENSE.html")
 set(CPACK_PACKAGE_EXECUTABLES "splitbill;${PROJECT_DISPLAY_NAME}")
@@ -23,6 +23,17 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
     set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS On)
     set(CPACK_DEBIAN_PACKAGE_SECTION "misc")
+    set(CPACK_RPM_PACKAGE_LICENSE "GPL-3.0")
+    find_program(PANDOC_PATH NAMES pandoc)
+    if (NOT PANDOC_PATH)
+        message(FATAL_ERROR "Could not find pandoc, required for building installers")
+    endif ()
+    execute_process(COMMAND ${PANDOC_PATH}
+            "--standalone" "--embed-resources" "--from" "commonmark" "--to" "plain" "${PROJECT_SOURCE_DIR}/README.md"
+            OUTPUT_FILE "${PROJECT_BINARY_DIR}/package_description.txt"
+            ENCODING "UTF8"
+    )
+    set(CPACK_PACKAGE_DESCRIPTION_FILE "${PROJECT_BINARY_DIR}/package_description.txt")
 endif ()
 
 # Windows metadata
